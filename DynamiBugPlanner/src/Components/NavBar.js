@@ -21,11 +21,6 @@ import Stack from 'react-bootstrap/Stack';
 //     )
 // }
 
-const User = {
-    'IsSignedIn': true,
-    'Name': "John Doe",
-}
-
 function BrandLogo() {
     return (
         <Navbar.Brand href="#home">
@@ -51,27 +46,31 @@ function SearchComponent() {
 }
 
 function UserLogin() {
+    const User = {
+        'IsSignedIn': true,
+        'Name': "John Doe",
+    }
+
     let content;
 
     if(User.IsSignedIn){ 
         content = (
-            <Nav className="justify-content-end flex-grow-1 pe-3">
-                <Nav.Link href="#action1">Login</Nav.Link>
-                <Nav.Link href="#action2">Register</Nav.Link>
+            <Nav className="me-auto">
+                <Nav.Link href="#home">Login</Nav.Link>
+                <Nav.Link href="#features">Register</Nav.Link>
             </Nav>
         );
     } else {
         content = (
-            <Nav className="justify-content-end flex-grow-1 pe-3">
-                <Nav.Link href="#action1">{User.Name}</Nav.Link>
-                <Nav.Link href="#action2">Logout</Nav.Link>
+            <Nav className="me-auto">
+                <Nav.Link href="#home">{User.Name}</Nav.Link>
+                <Nav.Link href="#features">Logout</Nav.Link>
             </Nav>
         );
     }
 
     return(
-        {content}
-        <Nav
+        content
         // To=Do: Add Profile Image
     );
 }
