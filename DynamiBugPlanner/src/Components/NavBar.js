@@ -12,7 +12,7 @@ function BrandLogo() {
     return (
         <Navbar.Brand href="#home">
             <img
-              alt="brand logo"
+              //alt="brand logo"
               src="./logo.svg"
               width="30"
               height="30"
