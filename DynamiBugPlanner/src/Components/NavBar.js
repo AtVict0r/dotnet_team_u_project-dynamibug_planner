@@ -38,7 +38,7 @@ function BrandLogo() {
 
 function SearchComponent() {
     return (
-      <Stack direction="horizontal" gap={3}>
+      <Stack className="mx-auto" direction="horizontal" gap={3} style="width:80%">
         <Form.Control className="me-auto" placeholder="Add your item here..." />
         <Button variant="secondary">Submit</Button>
       </Stack>
@@ -55,7 +55,7 @@ function UserLogin() {
 
     if(User.IsSignedIn){ 
         content = (
-            <Nav className="me-auto">
+            <Nav className="ms-auto">
                 <Nav.Link href="#home">Login</Nav.Link>
                 <Nav.Link href="#features">Register</Nav.Link>
             </Nav>
@@ -82,10 +82,10 @@ function NavBar() {
                 <BrandLogo />
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
+                    {/* <Nav className="me-auto"> */}
                         <SearchComponent />
                         <UserLogin />
-                    </Nav>
+                    {/* </Nav> */}
                 </Navbar.Collapse>
             </Container>
         </Navbar>
