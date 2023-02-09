@@ -1,5 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import * as React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -7,25 +5,14 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
 
-// function Example()  {
-//     return (
-//       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-//         <strong>Oh snap! You got an error!</strong>
-//         <p>
-//           Change this and that and try again.
-//         </p>
-//         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-//           <span aria-hidden="true">&times;</span>
-//         </button>
-//       </div>
-//     )
-// }
-
+/**
+ * It returns a Navbar.Brand component with an image and text.
+ */
 function BrandLogo() {
     return (
         <Navbar.Brand href="#home">
             <img
-              alt=""
+              alt="brand logo"
               src="./logo.svg"
               width="30"
               height="30"
@@ -36,15 +23,22 @@ function BrandLogo() {
     );
 }
 
+/**
+ * It returns a Stack component with a Form.Control and a Button component inside of it.
+ */
 function SearchComponent() {
     return (
-      <Stack className="mx-auto" direction="horizontal" gap={3} style={{width: 80 + '%'}}>
+      <Stack className="mx-auto" direction="horizontal" gap={3} width="80%">
         <Form.Control className="me-auto" placeholder="Add your item here..." />
         <Button variant="secondary">Submit</Button>
       </Stack>
     );
 }
 
+/**
+ * If the user is not signed in, display the login and register links, otherwise display the user's name
+ * and logout links.
+ */
 function UserLogin() {
     const User = {
         'IsSignedIn': true,
@@ -75,6 +69,11 @@ function UserLogin() {
     );
 }
 
+/**
+ * A Navbar component with a container component inside of it. The container component has a
+ * BrandLogo component, a Navbar.Toggle component, and a Navbar.Collapse component inside of it. The
+ * Navbar.Collapse component has a SearchComponent component and a UserLogin component inside of it.
+ */
 function NavBar() {
     return (
         <Navbar bg="light" expand="lg">
@@ -82,10 +81,8 @@ function NavBar() {
                 <BrandLogo />
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    {/* <Nav className="me-auto"> */}
                         <SearchComponent />
                         <UserLogin />
-                    {/* </Nav> */}
                 </Navbar.Collapse>
             </Container>
         </Navbar>

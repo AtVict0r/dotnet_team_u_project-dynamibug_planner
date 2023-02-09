@@ -1,15 +1,17 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+// import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Test from './Components/NavBar';
+import NavBar from './Components/NavBar';
+import SideBar from './Components/SideBar';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <Test />
+    <NavBar />
+    <SideBar />
   </React.StrictMode>
 );
 
