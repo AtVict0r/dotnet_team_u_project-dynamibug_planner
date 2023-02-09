@@ -38,7 +38,7 @@ function BrandLogo() {
 
 function SearchComponent() {
     return (
-      <Stack className="mx-auto" direction="horizontal" gap={3} style="width:80%">
+      <Stack className="mx-auto" direction="horizontal" gap={3} style={{width: 80 + '%'}}>
         <Form.Control className="me-auto" placeholder="Add your item here..." />
         <Button variant="secondary">Submit</Button>
       </Stack>
