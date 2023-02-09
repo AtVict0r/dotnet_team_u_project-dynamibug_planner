@@ -1,28 +1,35 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import NavBar from './Components/NavBar';
-import SideBar from './Components/SideBar';
+import Main from './Components/Main';
 import Footer from './Components/Footer';
+
+export default function Page() {
+  return (
+    <React.StrictMode>
+       <BrowserRouter>
+        <header>
+          <NavBar />
+        </header>
+        <main>
+          <Main />
+        </main>
+        <footer>
+          <Footer />
+        </footer>
+      </BrowserRouter>
+  </React.StrictMode>
+    
+  );
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <header>
-      <NavBar />
-    </header>
-    <aside>
-      <SideBar />
-    </aside>  
-    <main>
-      <Main />
-    </main>
-    <footer>
-      <Footer />
-    </footer>
-  </React.StrictMode>
+  
 );
 
 // If you want to start measuring performance in your app, pass a function
