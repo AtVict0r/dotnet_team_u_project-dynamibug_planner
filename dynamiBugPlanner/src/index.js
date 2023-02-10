@@ -6,12 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import NavBar from './Components/NavBar';
 import Main from './Components/Main';
 import Footer from './Components/Footer';
+// import AddReports from './Components/BugReports/AddReport';
 
 export default function Page() {
   return (
     <React.StrictMode>
       <NavBar />
       <Main />
+      {/* <AddReports /> */}
       <Footer />
     </React.StrictMode>      
   );

@@ -1,6 +1,7 @@
 import SideBar from "./AdminPage/SideBar";
 import SearchBar from "./SearchBar";
 import Card from "react-bootstrap/Card";
+import AddReports from "./BugReports/AddReport";
 
 function UserHome() {
   return (
