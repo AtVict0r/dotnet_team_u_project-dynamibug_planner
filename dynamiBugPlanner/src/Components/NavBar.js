@@ -57,7 +57,7 @@ function UserLogin() {
  * BrandLogo component, a Navbar.Toggle component, and a Navbar.Collapse component inside of it. The
  * Navbar.Collapse component has a SearchComponent component and a UserLogin component inside of it.
  */
-function NavBar() {
+export default function NavBar() {
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -71,6 +71,3 @@ function NavBar() {
     </Navbar>
   );
 }
-
-// export default Example;
-export default NavBar;

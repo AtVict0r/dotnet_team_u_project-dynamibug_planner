@@ -1,19 +1,29 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import NavBar from './Components/NavBar';
-import Main from './Components/Main';
+import Home from './Components/Home';
 import Footer from './Components/Footer';
-// import AddReports from './Components/BugReports/AddReport';
+import Browse from './Components/BugReports/Browse';
 
-export default function Page() {
+
+let user = {
+  role: "admin",
+}
+
+export default function Page({pageType = 'home'}) {
+  let content = <Home user={user}/>;
+
+  if (pageType === 'browse') {
+    content = <Browse />;
+  }
+
   return (
     <React.StrictMode>
       <NavBar />
-      <Main />
-      {/* <AddReports /> */}
+      {content}
       <Footer />
     </React.StrictMode>      
   );

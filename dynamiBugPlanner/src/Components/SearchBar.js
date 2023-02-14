@@ -5,7 +5,7 @@ import Stack from "react-bootstrap/Stack";
 /**
  * It returns a Stack component with a Form.Control and a Button component inside of it.
  */
-function SearchBar() {
+export default function SearchBar() {
   return (
     <Stack
       className="mx-auto"
@@ -21,5 +21,3 @@ function SearchBar() {
     </Stack>
   );
 }
-
-export default SearchBar;
