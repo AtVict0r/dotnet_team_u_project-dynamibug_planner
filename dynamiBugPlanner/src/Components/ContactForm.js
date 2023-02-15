@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 export default function ContactForm() {
   // lazy useState initializer
+  const [senderName, setSenderName] = useLocalStorage("senderName");
   const [senderEmail, setSenderEmail] = useLocalStorage("senderEmail");
   const [receiverEmail, setReceiverEmail] = useLocalStorage("receiverEmail");
   const [messageTitle, setMessageTitle] = useLocalStorage("messageTitle");
@@ -11,7 +12,18 @@ export default function ContactForm() {
     <div style={{}}>
       <form>
         <div>
-          <label htmlFor="senderEmail">Sender: </label>
+          <label htmlFor="senderName">Name: </label>
+          <input
+            id="senderName"
+            value={senderName}
+            onChange={(event) => {
+              setSenderName(event.target.value);
+            }}
+            type="text"
+          />
+        </div>
+        <div>
+          <label htmlFor="senderEmail">Email: </label>
           <input
             id="senderEmail"
             value={senderEmail}
@@ -52,7 +64,12 @@ export default function ContactForm() {
               setMessageBody(event.target.value);
             }}
           />
-        </div>
+        </div>		
+		<div>
+        <input type="checkbox" id="userIsHumman" value="I am not a robot." />
+        <label htmlFor="userIsHuman">I am not a robot</label>
+      </div>
+      <button type="button" className="btn btn-primary">Send</button>
       </form>
     </div>
   );
