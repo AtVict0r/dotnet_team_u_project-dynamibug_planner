@@ -1,7 +1,7 @@
-import SideBar from "./AdminPage/SideBar";
 import SearchBar from "./SearchBar";
 import Card from "react-bootstrap/Card";
-import AddReports from "./BugReports/AddReport";
+import AddReport from "./BugReports/AddReport";
+import Contact from "./ContactForm";
 
 function NavCard({ src, title }) {
   return (
@@ -38,7 +38,9 @@ function UserHome() {
         }}
       >
         <NavCard src="https://via.placeholder.com/50" title="Add" />
-        <NavCard src="https://via.placeholder.com/50" title="Browse" />
+        <a className="nav-link" href="/Browse">
+          <NavCard src="https://via.placeholder.com/50" title="Browse" />
+        </a>
         <NavCard src="https://via.placeholder.com/50" title="Documentation" />
         <NavCard src="https://via.placeholder.com/50" title="Contact" />
       </div>
@@ -46,13 +48,8 @@ function UserHome() {
   );
 }
 
-function AdminHome() {
-  return <SideBar />;
-}
-
-export default function Home({user}) {
+export default function Home() {
   let content;
-  if (user.role == "admin") {content = <AdminHome />;}
   return (
     <>
       {content}

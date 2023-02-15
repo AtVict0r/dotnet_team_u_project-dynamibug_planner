@@ -34,7 +34,7 @@ export default function SideBar() {
           backgroundColor: "white",
           display: "flex",
           width: "20vw",
-          height: "90.7%",
+          height: "100%",
           zIndex: "5",
           position: "absolute",
           justifyContent: "center",
@@ -44,23 +44,28 @@ export default function SideBar() {
       >
         <ul className="list-unstyled list">
           <li style={listItem}>
-            <a className="nav-link" href="#dashboard">
+            <a className="nav-link" href="/">
               <b>Dashboard</b>
             </a>
           </li>
           <li style={listItem}>
-            <a className="nav-link" href="#plan">
+            <a className="nav-link" href="Plan">
               Plan
             </a>
           </li>
           <li style={listItem}>
-            <a className="nav-link" href="#archive">
+            <a className="nav-link" href="/Archive">
               Archive
             </a>
           </li>
           <li style={listItem}>
-            <a className="nav-link" href="#users">
+            <a className="nav-link" href="/Users">
               Users
+            </a>
+          </li>
+          <li style={listItem}>
+            <a className="nav-link" href="/Github">
+              Github
             </a>
           </li>
         </ul>

@@ -1,22 +1,26 @@
+import { Outlet, Link, useLocation } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import SearchBar from "./SearchBar";
+
 /**
  * It returns a Navbar.Brand component with an image and text.
  */
 function BrandLogo() {
   return (
-    <Navbar.Brand href="#home">
-      <img
-        alt="brand logo"
-        src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-        width="30"
-        height="30"
-        className="d-inline-block align-top"
-      />{" "}
-      DynamiBug Planner
-    </Navbar.Brand>
+    <Link className="nav-link" to="/">
+      <Navbar.Brand>
+        <img
+          alt="brand logo"
+          src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+          width="30"
+          height="30"
+          className="d-inline-block align-top"
+        />{" "}
+        DynamiBug Planner
+      </Navbar.Brand>
+    </Link>
   );
 }
 
@@ -59,15 +63,18 @@ function UserLogin() {
  */
 export default function NavBar() {
   return (
-    <Navbar bg="light" expand="lg">
-      <Container>
-        <BrandLogo />
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <SearchBar />
-          <UserLogin />
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <>
+      <Navbar bg="light" expand="lg">
+        <Container>
+          <BrandLogo />
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            {useLocation().pathname == "/" ? <></> : <SearchBar />}
+            <UserLogin />
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Outlet />
+    </>
   );
 }
