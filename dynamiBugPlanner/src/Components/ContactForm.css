@@ -1,0 +1,16 @@
+body {
+}
+
+container{
+    position:relative;
+}
+
+label {
+    padding-bottom:2rem;
+    font:bold 1rem arial, verdana;
+}
+
+textarea, input{
+    position:absolute;
+    left:10rem;
+}

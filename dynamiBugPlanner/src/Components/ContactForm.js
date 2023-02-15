@@ -1,3 +1,4 @@
+import './ContactForm.css';
 import React, { useState, useEffect } from "react";
 
 export default function ContactForm() {
@@ -9,7 +10,7 @@ export default function ContactForm() {
   const [messageBody, setMessageBody] = useLocalStorage("messageBody");
 
   return (
-    <div style={{}}>
+      <div className="container" style={{}}>
       <form>
         <div>
           <label htmlFor="senderName">Name: </label>
