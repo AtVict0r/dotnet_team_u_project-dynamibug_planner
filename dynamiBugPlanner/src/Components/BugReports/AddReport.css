@@ -1,0 +1,13 @@
+.ARcontainer {
+    position: relative;
+}
+
+.ARlabel {
+    padding-bottom: 2rem;
+    font: bold 1rem arial, verdana;
+}
+
+.ARinput {
+    position: absolute;
+    left: 10rem;
+}
