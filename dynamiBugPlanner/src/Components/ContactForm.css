@@ -1,16 +1,13 @@
-body {
-}
-
-container{
+.CFcontainer{
     position:relative;
 }
 
-label {
+.CFlabel {
     padding-bottom:2rem;
     font:bold 1rem arial, verdana;
 }
 
-textarea, input{
+.CFinput{
     position:absolute;
     left:10rem;
 }
