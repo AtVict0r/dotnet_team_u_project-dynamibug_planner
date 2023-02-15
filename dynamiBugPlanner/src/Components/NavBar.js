@@ -13,7 +13,7 @@ function BrandLogo() {
       <Navbar.Brand>
         <img
           alt="brand logo"
-          src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+          src="https://via.placeholder.com/50"
           width="30"
           height="30"
           className="d-inline-block align-top"

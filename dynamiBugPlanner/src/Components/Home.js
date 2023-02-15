@@ -19,9 +19,9 @@ function NavCard({ src, title }) {
   );
 }
 
-function UserHome() {
+export default function Home() {
   return (
-    <div>
+    <>
       <div
         style={{
           marginTop: "15vh",
@@ -37,23 +37,19 @@ function UserHome() {
           flexDirection: "row",
         }}
       >
+        <a className="nav-link" href="/Add">
         <NavCard src="https://via.placeholder.com/50" title="Add" />
+        </a>
         <a className="nav-link" href="/Browse">
           <NavCard src="https://via.placeholder.com/50" title="Browse" />
         </a>
-        <NavCard src="https://via.placeholder.com/50" title="Documentation" />
+        <a className="nav-link" href="/Email">
         <NavCard src="https://via.placeholder.com/50" title="Contact" />
+        </a>        
+        <a className="nav-link" href="https://www.google.com">
+        <NavCard src="https://via.placeholder.com/50" title="Documentation" />
+        </a>
       </div>
-    </div>
-  );
-}
-
-export default function Home() {
-  let content;
-  return (
-    <>
-      {content}
-      <UserHome />
     </>
   );
 }

@@ -8,6 +8,8 @@ import NavBar from "./Components/NavBar";
 import SideBar from "./Components/AdminPage/SideBar";
 import Home from "./Components/Home";
 import Browse from './Components/BugReports/Browse';
+import Add from './Components/BugReports/AddReport';
+import Contact from './Components/ContactForm';
 import NoPage from "./Components/NoPage";
 import Plan from "./Components/AdminPage/PlanFix";
 import Archive from "./Components/AdminPage/ArchivedReports";
@@ -27,7 +29,9 @@ export default function Page() {
         <Routes>
           <Route path="/" element={<NavBar />}>
             <Route index element={<Home />} />
+            <Route path="/Add" element={<Add />} />
             <Route path="/Browse" element={<Browse />} />
+            <Route path="/Email" element={<Contact />} />
             <Route path="/Plan" element={<Plan />} />
             <Route path="/Archive" element={<Archive />} />
             <Route path="/Users" element={<Users />} />
