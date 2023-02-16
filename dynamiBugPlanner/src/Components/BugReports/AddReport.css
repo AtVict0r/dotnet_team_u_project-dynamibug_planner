@@ -1,21 +1,19 @@
-.ARcontainers {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 80%;
-    height: 100%;
-    background-color: #f2f2f2;
-    padding: 20px;
-    box-sizing: border-box;
+.ARcontainer {
+    position: relative;
 }
 
 .ARlabel {
     padding-bottom: 2rem;
+    margin-bottom:auto;
     font: bold 1rem arial, verdana;
 }
 
 .ARinput {
-    position: relative;
-    margin-left: 10rem;
+    position: absolute;
+    left: 10rem;
+}
+
+.ARdiv{
+    margin-bottom:15rem;
+    display: flex;
 }

@@ -39,7 +39,7 @@ export default function AddReport() {
         </label>
         <input className="ARinput" type="text" id="reportTitle" />
       </div>
-      <div>
+          <div className="ARdiv">
         <label className="ARlabel" htmlFor="reportDescription">
           Description
         </label>
@@ -50,7 +50,7 @@ export default function AddReport() {
           id="reportDescription"
         ></textarea>
       </div>
-      <button type="button" className="ARinput btn btn-primary">
+      <button type="button" className="ARbutton btn btn-primary">
         Upload Media
       </button>
       <br />
@@ -66,7 +66,7 @@ export default function AddReport() {
             I am not a robot
           </label>
         </div>
-        <input type="submit" className="ARinput btn btn-primary" value="Add"/>
+        <input type="submit" className="ARbutton btn btn-primary" value="Add"/>
       </div>
     </form>
   );
