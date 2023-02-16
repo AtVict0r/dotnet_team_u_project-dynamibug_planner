@@ -1,5 +1,6 @@
-.CFcontainer{
-    position:relative;
+.CFcontainer {
+    position: relative;
+    margin-top: 3rem;
 }
 
 .CFlabel {
