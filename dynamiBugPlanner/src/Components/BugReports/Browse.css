@@ -1,0 +1,14 @@
+.col-25{
+    width:25%;
+}
+
+.Blabel {
+    padding-bottom: 2rem;
+    padding-right: 1rem;
+    display: inline-block;
+    font: bold 1rem arial, verdana;
+}
+
+tr:nth-child(even){
+    background: #DDD;
+}
