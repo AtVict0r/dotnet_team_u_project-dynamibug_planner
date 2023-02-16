@@ -1,6 +1,7 @@
 function PlanFix() {
     return (
         <>
+        <h1>Plan Fix</h1>
         </>
     );
 }

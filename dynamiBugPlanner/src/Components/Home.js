@@ -22,13 +22,13 @@ function NavCard({ src, title }) {
 export default function Home() {
   return (
     <>
-      <div
+      <a className="nav-link" href="/Browse"
         style={{
           marginTop: "15vh",
         }}
       >
         <SearchBar />
-      </div>
+      </a>
       <div
         style={{
           marginTop: "10vh",
@@ -46,7 +46,7 @@ export default function Home() {
         <a className="nav-link" href="/Email">
         <NavCard src="https://via.placeholder.com/50" title="Contact" />
         </a>        
-        <a className="nav-link" href="https://www.google.com">
+        <a className="nav-link" href="/Projects">
         <NavCard src="https://via.placeholder.com/50" title="Documentation" />
         </a>
       </div>

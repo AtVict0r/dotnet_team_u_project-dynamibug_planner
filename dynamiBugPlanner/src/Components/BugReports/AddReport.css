@@ -1,5 +1,13 @@
-.ARcontainer {
-    position: relative;
+.ARcontainers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 100%;
+    background-color: #f2f2f2;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .ARlabel {
@@ -8,6 +16,6 @@
 }
 
 .ARinput {
-    position: absolute;
-    left: 10rem;
+    position: relative;
+    margin-left: 10rem;
 }
