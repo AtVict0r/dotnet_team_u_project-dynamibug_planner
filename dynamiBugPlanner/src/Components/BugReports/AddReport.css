@@ -4,16 +4,23 @@
 
 .ARlabel {
     padding-bottom: 2rem;
-    margin-bottom:auto;
+    width: 25%;
+    display: inline-block;
     font: bold 1rem arial, verdana;
 }
 
 .ARinput {
-    position: absolute;
+    width: 75%;
     left: 10rem;
+    margin-bottom: 1rem;
 }
 
-.ARdiv{
-    margin-bottom:15rem;
-    display: flex;
+.ARcheckbox {
+    max-width: 1rem;
+    max-height: 1rem;
+}
+
+.ARbutton {
+    margin-left: 2rem;
+    width: 20%;
 }

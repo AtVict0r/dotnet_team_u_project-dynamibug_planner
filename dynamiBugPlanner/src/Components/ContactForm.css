@@ -4,10 +4,23 @@
 
 .CFlabel {
     padding-bottom:2rem;
+    width:25%;
+    display:inline-block;
     font:bold 1rem arial, verdana;
 }
 
 .CFinput{
-    position:absolute;
+    width:75%;
     left:10rem;
+    margin-bottom:1rem;
+}
+
+.CFcheckbox{
+   max-width:1rem;
+   max-height:1rem;
+}
+
+.CFbutton{
+    margin-left:2rem;
+    width:20%;
 }
