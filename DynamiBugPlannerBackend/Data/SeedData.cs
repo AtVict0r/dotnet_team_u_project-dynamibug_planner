@@ -14,32 +14,30 @@ public static class SeedData
                 throw new ArgumentNullException("Null DatabaseContext");
             }
 
-            // Look for any movies.
+            // Look for any projcts.
             if (context.Projects.Any())
             {
                 return;   // DB has been seeded
             }
 
-            context.Projects.AddRange(
-                new ProjectModel
-                {
-                    Id = 1,
-                    Name = "Test Project",
-                    Description = "This is a test project"
-                },
-                new ProjectModel
-                {
-                    Id = 2,
-                    Name = "Test Project 2",
-                    Description = "This is the second test project"
-                },
-                new ProjectModel
-                {
-                    Id = 3,
-                    Name = "Test Project 3",
-                    Description = "This is the third project"
-                }
-            );
+            
+            List<ProjectModel> myProjects = new List<ProjectModel>();
+            List<BugFixModel> myFixs = new List<BugFixModel>();
+
+        
+            for(int i = 1; i <= 5; i++)
+            {
+                myProjects.Add(
+                     new ProjectModel
+                    {
+                        Id = i,
+                        Name = $"Test Project {i}",
+                        Description = $"This is test project {i}"
+                    }
+                );
+            } 
+
+            context.Projects.AddRange(myProjects);
 
             context.BugReports.AddRange(
                 new ReportModel
@@ -75,7 +73,21 @@ public static class SeedData
                     ProjectId = 3
                 }
             );
-            
+
+            for(int i = 1; i <= 4; i++)
+            {
+                myFixs.Add(
+                     new BugFixModel
+                    {
+                        Id = i,
+                        Html = $"<p>Bug Fix for project {i}<p>",
+                        BugId = i
+                    }
+                );
+            } 
+
+            context.Plans.AddRange(myFixs);
+
             context.SaveChanges();
         }
     }
