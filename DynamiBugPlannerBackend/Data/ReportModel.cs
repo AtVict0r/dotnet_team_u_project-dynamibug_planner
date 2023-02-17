@@ -28,8 +28,8 @@ namespace DynamiBugPlannerBackend.Data
         // public UserModel User { get; set; }
         // public string UserName { get; set; }
 
-        [ForeignKey(nameof(Project))]
-        public ProjectModel Project { get; set; }
+        // [ForeignKey("ProjectId")]
+        // public ProjectModel Project { get; set; }
         public int ProjectId { get; set; }
     }
 }
