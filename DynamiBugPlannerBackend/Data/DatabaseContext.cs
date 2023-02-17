@@ -11,7 +11,7 @@ namespace DynamiBugPlannerBackend.Data
 
         public DbSet<ReportModel> BugReports { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<ProjectModel>().HasData(
                 new ProjectModel

@@ -1,3 +1,4 @@
+
 namespace DynamiBugPlannerBackend.Data
 {
     public class UserModel 

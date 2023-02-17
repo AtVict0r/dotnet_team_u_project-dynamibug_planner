@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DynamiBugPlannerBackend.Data
 {
     public class ReportModel
@@ -27,6 +30,6 @@ namespace DynamiBugPlannerBackend.Data
 
         [ForeignKey(nameof(Project))]
         public ProjectModel Project { get; set; }
-        public string ProjectId { get; set; }
+        public int ProjectId { get; set; }
     }
 }

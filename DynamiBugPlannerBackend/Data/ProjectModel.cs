@@ -1,10 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DynamiBugPlannerBackend.Data
 {
     public class ProjectModel 
     {
         [Key]
         public long Id { get; set; }
-
         [Column(TypeName = "VARCHAR(255)")]
         public string Name { get; set; } = null!;
 
