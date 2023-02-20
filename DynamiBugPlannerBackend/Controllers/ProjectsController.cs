@@ -15,7 +15,7 @@ namespace DynamiBugPlannerBackend.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProjectsController(IUnitOfWork unitOfWork  = null!, IMapper mapper = null!)
+        public ProjectsController(IUnitOfWork unitOfWork = null!, IMapper mapper = null!)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -30,7 +30,7 @@ namespace DynamiBugPlannerBackend.Controllers
             try
             {
                 var projects = await _unitOfWork.Projects.GetAll();
-                var results = _mapper.Map<IList<ProjectDTO>>(projects); 
+                var results = _mapper.Map<IList<ProjectDTO>>(projects);
                 return Ok(results);
             }
             catch (Exception ex)
@@ -42,14 +42,21 @@ namespace DynamiBugPlannerBackend.Controllers
         // GET: api/Projects/5
         [HttpGet("{id:long}", Name = "GetProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetProject(long id)
         {
-             try
+            try
             {
-                var project = await _unitOfWork.Projects.Get(q => q.Id == id, new List<string> { "Reports"} );
-                var result = _mapper.Map<ProjectDTO>(project); 
-                return Ok(result);
+                var project = await _unitOfWork.Projects.Get(q => q.Id == id, new List<string> { "Reports" });
+
+                if (project != null)
+                {
+                    var result = _mapper.Map<ProjectDTO>(project);
+                    return Ok(result);
+                }
+
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -58,14 +65,14 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Projects
-        // [Authorize]
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectDTO projectDTO)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -79,12 +86,13 @@ namespace DynamiBugPlannerBackend.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
             }
         }
 
         // PUT: api/Projects/5
+        // [Authorize(Roles = "Admin")]
         [HttpPut("{id:long}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -92,7 +100,7 @@ namespace DynamiBugPlannerBackend.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateProject(long id, [FromBody] UpdateProjectDTO projectDTO)
         {
-            if(!ModelState.IsValid || id < 1 || id != projectDTO.Id)
+            if (!ModelState.IsValid || id < 1 || id != projectDTO.Id)
             {
                 return BadRequest(ModelState);
             }
@@ -101,7 +109,7 @@ namespace DynamiBugPlannerBackend.Controllers
             {
                 var project = await _unitOfWork.Projects.Get(q => q.Id == id);
 
-                if(project != null)
+                if (project != null)
                 {
                     _mapper.Map(projectDTO, project);
                     _unitOfWork.Projects.Update(project);
@@ -119,6 +127,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Projects/5
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -126,7 +135,7 @@ namespace DynamiBugPlannerBackend.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteProject(long id)
         {
-            if(id < 1)
+            if (id < 1)
             {
                 return BadRequest();
             }
@@ -134,7 +143,7 @@ namespace DynamiBugPlannerBackend.Controllers
             try
             {
                 var project = await _unitOfWork.Projects.Get(q => q.Id == id);
-                
+
                 if (project != null)
                 {
                     await _unitOfWork.Projects.Delete(id);
@@ -148,7 +157,7 @@ namespace DynamiBugPlannerBackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
-            }   
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DynamiBugPlannerBackend.Models
     public class CommentDTO : CreateCommentDTO
     {
         public long Id { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; }
         // public UserModel User { get; set; } = null!;
         public ReportDTO Bug { get; set; } = null!;
     }

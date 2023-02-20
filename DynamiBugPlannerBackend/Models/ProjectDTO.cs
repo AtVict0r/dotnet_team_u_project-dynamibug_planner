@@ -14,7 +14,7 @@ namespace DynamiBugPlannerBackend.Models
     public class UpdateProjectDTO : CreateProjectDTO 
     {
         public long Id { get; set; }
-        public bool? IsArchived { get; set; }
+        public bool IsArchived { get; set; }
     }
 
     public class ProjectDTO : UpdateProjectDTO

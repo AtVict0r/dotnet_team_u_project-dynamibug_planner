@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DynamiBugPlannerBackend.Data;
+using DynamiBugPlannerBackend.Interface;
+using AutoMapper;
+using DynamiBugPlannerBackend.Models;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -13,95 +16,152 @@ namespace DynamiBugPlannerBackend.Controllers
     [ApiController]
     public class ReportsController : ControllerBase
     {
-        private readonly DatabaseContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ReportsController(DatabaseContext context)
+        public ReportsController(IUnitOfWork unitOfWork = null!, IMapper mapper = null!)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/Reports
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReportModel>>> GetBugReports()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetReports()
         {
-            return await _context.BugReports.ToListAsync();
+            try
+            {
+                var reports = await _unitOfWork.Reports.GetAll();
+                var results = _mapper.Map<IList<ReportDTO>>(reports);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
 
         // GET: api/Reports/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ReportModel>> GetReportModel(long id)
+        [HttpGet("{id:long}", Name = "GetReport")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetReport(long id)
         {
-            var reportModel = await _context.BugReports.FindAsync(id);
-
-            if (reportModel == null)
+            try
             {
+                var report = await _unitOfWork.Reports.Get(q => q.Id == id, new List<string> { "Project", "Plan", "Comments" });
+
+                if (report != null)
+                {
+                    var result = _mapper.Map<ReportDTO>(report);
+                    return Ok(result);
+                }
+
                 return NotFound();
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
 
-            return reportModel;
+        // POST: api/Reports
+        // [Authorize]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateReport([FromBody] CreateReportDTO reportDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var report = _mapper.Map<ReportModel>(reportDTO);
+                await _unitOfWork.Reports.Insert(report);
+                await _unitOfWork.Save();
+                return CreatedAtRoute("GetReport", new { id = report.Id }, report);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
 
         // PUT: api/Reports/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReportModel(long id, ReportModel reportModel)
+        // [Authorize]
+        [HttpPut("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateReport(long id, [FromBody] UpdateReportDTO reportDTO)
         {
-            if (id != reportModel.Id)
+            if (!ModelState.IsValid || id < 1 || id != reportDTO.Id)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var report = await _unitOfWork.Reports.Get(q => q.Id == id);
+
+                if (report != null)
+                {
+                    _mapper.Map(reportDTO, report);
+                    _unitOfWork.Reports.Update(report);
+                    await _unitOfWork.Save();
+
+                    return NoContent();
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        // DELETE: api/Reports/5
+        // [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteReport(long id)
+        {
+            if (id < 1)
             {
                 return BadRequest();
             }
 
-            _context.Entry(reportModel).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReportModelExists(id))
+                var report = await _unitOfWork.Reports.Get(q => q.Id == id);
+
+                if (report != null)
                 {
-                    return NotFound();
+                    await _unitOfWork.Reports.Delete(id);
+                    await _unitOfWork.Save();
+
+                    return NoContent();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
-        }
-
-        // POST: api/Reports
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ReportModel>> PostReportModel(ReportModel reportModel)
-        {
-            _context.BugReports.Add(reportModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetReportModel", new { id = reportModel.Id }, reportModel);
-        }
-
-        // DELETE: api/Reports/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReportModel(long id)
-        {
-            var reportModel = await _context.BugReports.FindAsync(id);
-            if (reportModel == null)
-            {
                 return NotFound();
             }
-
-            _context.BugReports.Remove(reportModel);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ReportModelExists(long id)
-        {
-            return _context.BugReports.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
     }
 }

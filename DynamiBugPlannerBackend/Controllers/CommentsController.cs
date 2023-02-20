@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DynamiBugPlannerBackend.Data;
+using DynamiBugPlannerBackend.Interface;
+using AutoMapper;
+using DynamiBugPlannerBackend.Models;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -13,95 +16,74 @@ namespace DynamiBugPlannerBackend.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly DatabaseContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CommentsController(DatabaseContext context)
+        public CommentsController(IUnitOfWork unitOfWork = null!, IMapper mapper = null!)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        // GET: api/Comments
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentModel>>> GetComments()
+        // POST: api/Comments
+        // [Authorize]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentDTO commentDTO)
         {
-            return await _context.Comments.ToListAsync();
-        }
-
-        // GET: api/Comments/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CommentModel>> GetCommentModel(long id)
-        {
-            var commentModel = await _context.Comments.FindAsync(id);
-
-            if (commentModel == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return BadRequest(ModelState);
             }
 
-            return commentModel;
+            try
+            {
+                var comment = _mapper.Map<CommentModel>(commentDTO);
+                await _unitOfWork.Comments.Insert(comment);
+                await _unitOfWork.Save();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
 
-        // PUT: api/Comments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommentModel(long id, CommentModel commentModel)
+        // DELETE: api/Comments/5
+        // [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteComment(long id)
         {
-            if (id != commentModel.Id)
+            if (id < 1)
             {
                 return BadRequest();
             }
 
-            _context.Entry(commentModel).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentModelExists(id))
+                var comment = await _unitOfWork.Comments.Get(q => q.Id == id);
+
+                if (comment != null)
                 {
-                    return NotFound();
+                    await _unitOfWork.Comments.Delete(id);
+                    await _unitOfWork.Save();
+
+                    return NoContent();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
-        }
-
-        // POST: api/Comments
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CommentModel>> PostCommentModel(CommentModel commentModel)
-        {
-            _context.Comments.Add(commentModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCommentModel", new { id = commentModel.Id }, commentModel);
-        }
-
-        // DELETE: api/Comments/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCommentModel(long id)
-        {
-            var commentModel = await _context.Comments.FindAsync(id);
-            if (commentModel == null)
-            {
                 return NotFound();
             }
-
-            _context.Comments.Remove(commentModel);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CommentModelExists(long id)
-        {
-            return _context.Comments.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
     }
 }

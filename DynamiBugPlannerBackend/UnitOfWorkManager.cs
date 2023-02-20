@@ -30,10 +30,12 @@ namespace DynamiBugPlannerBackend
             await _context.SaveChangesAsync();
         }
 
+        // The Dispose() function is used to dispose of the context object when the object is no longer needed
         public void  Dispose()
         {
             _context.Dispose();
-            GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this); // Requests that the common language runtime not call the finalizer for the specified object
+            // prevents a redundant garbage collection from being called
         }
     }
 }

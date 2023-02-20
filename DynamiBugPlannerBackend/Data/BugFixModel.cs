@@ -10,8 +10,8 @@ namespace DynamiBugPlannerBackend.Data
 
         public string Html { get; set; } = null!;
 
-        [ForeignKey(nameof(Bug))]
+        [ForeignKey(nameof(Report))]
         public long BugId { get; set; }
-        public ReportModel Bug { get; set; } = null!;
+        public ReportModel Report { get; set; } = null!;
     }
 }

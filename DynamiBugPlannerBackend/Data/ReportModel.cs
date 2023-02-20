@@ -30,6 +30,7 @@ namespace DynamiBugPlannerBackend.Data
         public long ProjectId { get; set; }
         public ProjectModel Project { get; set; } = null!;
 
+        public virtual BugFixModel? Plan { get; set; }
         public virtual IList<CommentModel>? Comments { get; set; }
     }
 }

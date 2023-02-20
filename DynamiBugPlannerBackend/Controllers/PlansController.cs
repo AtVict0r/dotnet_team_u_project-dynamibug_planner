@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DynamiBugPlannerBackend.Data;
+using DynamiBugPlannerBackend.Interface;
+using AutoMapper;
+using DynamiBugPlannerBackend.Models;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -13,95 +16,152 @@ namespace DynamiBugPlannerBackend.Controllers
     [ApiController]
     public class PlansController : ControllerBase
     {
-        private readonly DatabaseContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public PlansController(DatabaseContext context)
+        public PlansController(IUnitOfWork unitOfWork = null!, IMapper mapper = null!)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/Plans
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BugFixModel>>> GetPlans()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPlans()
         {
-            return await _context.Plans.ToListAsync();
+            try
+            {
+                var plans = await _unitOfWork.Plans.GetAll();
+                var results = _mapper.Map<IList<BugFixDTO>>(plans);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
 
         // GET: api/Plans/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BugFixModel>> GetBugFixModel(long id)
+        [HttpGet("{id:long}", Name = "GetPlan")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPlan(long id)
         {
-            var bugFixModel = await _context.Plans.FindAsync(id);
-
-            if (bugFixModel == null)
+            try
             {
+                var plan = await _unitOfWork.Plans.Get(q => q.Id == id, new List<string> { "Report" });
+
+                if (plan != null)
+                {
+                    var result = _mapper.Map<BugFixDTO>(plan);
+                    return Ok(result);
+                }
+
                 return NotFound();
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
 
-            return bugFixModel;
+        // POST: api/Plans
+        // [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreatePlan([FromBody] CreateBugFixDTO planDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var plan = _mapper.Map<BugFixModel>(planDTO);
+                await _unitOfWork.Plans.Insert(plan);
+                await _unitOfWork.Save();
+                return CreatedAtRoute("GetPlan", new { id = plan.Id }, plan);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
 
         // PUT: api/Plans/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBugFixModel(long id, BugFixModel bugFixModel)
+        // [Authorize(Roles = "Admin")]
+        [HttpPut("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdatePlan(long id, [FromBody] UpdateBugFixDTO planDTO)
         {
-            if (id != bugFixModel.Id)
+            if (!ModelState.IsValid || id < 1)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var plan = await _unitOfWork.Plans.Get(q => q.Id == id);
+
+                if (plan != null)
+                {
+                    _mapper.Map(planDTO, plan);
+                    _unitOfWork.Plans.Update(plan);
+                    await _unitOfWork.Save();
+
+                    return NoContent();
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        // DELETE: api/Plans/5
+        // [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeletePlan(long id)
+        {
+            if (id < 1)
             {
                 return BadRequest();
             }
 
-            _context.Entry(bugFixModel).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BugFixModelExists(id))
+                var plan = await _unitOfWork.Plans.Get(q => q.Id == id);
+
+                if (plan != null)
                 {
-                    return NotFound();
+                    await _unitOfWork.Plans.Delete(id);
+                    await _unitOfWork.Save();
+
+                    return NoContent();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
-        }
-
-        // POST: api/Plans
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<BugFixModel>> PostBugFixModel(BugFixModel bugFixModel)
-        {
-            _context.Plans.Add(bugFixModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBugFixModel", new { id = bugFixModel.Id }, bugFixModel);
-        }
-
-        // DELETE: api/Plans/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBugFixModel(long id)
-        {
-            var bugFixModel = await _context.Plans.FindAsync(id);
-            if (bugFixModel == null)
-            {
                 return NotFound();
             }
-
-            _context.Plans.Remove(bugFixModel);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool BugFixModelExists(long id)
-        {
-            return _context.Plans.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
         }
     }
 }
