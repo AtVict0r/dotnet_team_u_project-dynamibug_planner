@@ -17,19 +17,19 @@ namespace DynamiBugPlannerBackend.Data
         public string Title { get; set; } = null!;
 
         public string Description { get; set; } = null!;
-
-        public bool isArchived { get; set; } = false;
         
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
         public DateTime? ModifyDate { get; set; }
 
         // [ForeignKey(nameof(User))]
-        // public UserModel User { get; set; }
-        // public string UserName { get; set; }
+        // public string UserName { get; set; } = null!;
+        // public UserModel User { get; set; } = null!;
 
-        // [ForeignKey("ProjectId")]
-        // public ProjectModel Project { get; set; }
-        public int ProjectId { get; set; }
+        [ForeignKey(nameof(Project))]
+        public long ProjectId { get; set; }
+        public ProjectModel Project { get; set; } = null!;
+
+        public virtual IList<CommentModel>? Comments { get; set; }
     }
 }

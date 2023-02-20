@@ -14,81 +14,85 @@ public static class SeedData
                 throw new ArgumentNullException("Null DatabaseContext");
             }
 
-            // Look for any projcts.
+            // Look for any projects.
             if (context.Projects.Any())
             {
-                return;   // DB has been seeded
+                return;   // DB already has data
             }
 
-            
-            List<ProjectModel> myProjects = new List<ProjectModel>();
-            List<BugFixModel> myFixs = new List<BugFixModel>();
+            SeedProjects(context);
 
-        
-            for(int i = 1; i <= 5; i++)
-            {
-                myProjects.Add(
-                     new ProjectModel
-                    {
-                        Id = i,
-                        Name = $"Test Project {i}",
-                        Description = $"This is test project {i}"
-                    }
-                );
-            } 
-
-            context.Projects.AddRange(myProjects);
-
-            context.BugReports.AddRange(
-                new ReportModel
-                {
-                    Id = 1,
-                    Type = "Bug Report",
-                    Title = "Test Project 1 Bug Report",
-                    Description = "This is a test report for test project 1",
-                    ProjectId = 1
-                },
-                new ReportModel
-                {
-                    Id = 2,
-                    Type = "Bug Report",
-                    Title = "Test Project 1 Bug Report 2",
-                    Description = "This is another test report for test project 1",
-                    ProjectId = 1
-                },
-                new ReportModel
-                {
-                    Id = 3,
-                    Type = "Bug Report",
-                    Title = "Test Project 2 Bug Report",
-                    Description = "This is a test report for test project 2",
-                    ProjectId = 2
-                },
-                new ReportModel
-                {
-                    Id = 4,
-                    Type = "Bug Report",
-                    Title = "Test Project 3 Bug Report 1",
-                    Description = "This is a test report for test project 3",
-                    ProjectId = 3
-                }
-            );
-
-            for(int i = 1; i <= 4; i++)
-            {
-                myFixs.Add(
-                     new BugFixModel
-                    {
-                        Id = i,
-                        Html = $"<p>Bug Fix for project {i}<p>",
-                        BugId = i
-                    }
-                );
-            } 
-
-            context.Plans.AddRange(myFixs);
-
-            context.SaveChanges();
+            SeedReports(context);
         }
+    }
+
+    private static void SeedProjects(DatabaseContext context, int size = 5)
+    {
+        List<ProjectModel> myProjects = new List<ProjectModel>();
+
+        for (int i = 1; i <= size; i++)
+        {
+            myProjects.Add(
+                 new ProjectModel
+                 {
+                     Name = $"Test Project {i}",
+                     Description = $"This is test project {i}"
+                 }
+            );
+        }
+
+        context.AddRange(myProjects);
+        context.SaveChanges();
+    }
+
+    private static void SeedReports(DatabaseContext context, int size = 5)
+    {
+        List<ReportModel> myReports = new List<ReportModel>();
+        List<BugFixModel> myFixes = new List<BugFixModel>();
+        List<CommentModel> myComments = new List<CommentModel>();
+        string[] types = { "Bug", "Documentation", "Enhancement", "Help", "Question", "Other" };
+        string[] statuses = { "New", "Open", "Active", "Resolved", "Wont Fix", "Archived" };
+        string[] priorities = { "Unconfirmed", "Low", "Medium", "High", "Immediate" };
+
+        for (int i = 1; i <= size; i++)
+        {
+            for (int j = 1; j <= Random.Shared.Next(1, context.Projects.Count()); j++)
+            {
+                myReports.Add(
+                    new ReportModel
+                    {
+                        Type = types[Random.Shared.Next(types.Length)],
+                        Status = statuses[Random.Shared.Next(statuses.Length)],
+                        Priority = priorities[Random.Shared.Next(priorities.Length)],
+                        Title = $"Test Project {j} Bug Report {i}",
+                        Description = $"This is test report {i} for test project {j}",
+                        ProjectId = j
+                    }
+                );
+
+                int count = myReports.Count();
+                
+                myFixes.Add(
+                    new BugFixModel
+                    {
+                        Html = $"<p>Bug Fix for report {count}<p>",
+                        BugId = count
+                    }
+                );
+
+                myComments.Add(
+                     new CommentModel
+                     {
+                         Comment = $"This is a comment for bug report {count}",
+                         BugId = count
+                     }
+                );
+            }
+        }
+
+        context.AddRange(myReports);
+        context.AddRange(myFixes);
+        context.AddRange(myComments);
+        context.SaveChanges();
     }
 }

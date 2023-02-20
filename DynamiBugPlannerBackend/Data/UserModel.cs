@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 
 namespace DynamiBugPlannerBackend.Data
 {
     public class UserModel 
     {
+        [Key]
         public string Id { get; } = null!;
         public string? UserName { get; }
         private string? NormalizedUserName { get; }

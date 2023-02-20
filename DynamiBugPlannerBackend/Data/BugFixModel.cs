@@ -5,12 +5,13 @@ namespace DynamiBugPlannerBackend.Data
 {
     public class BugFixModel
     {
+        [Key]
         public long Id { get; set; }
 
         public string Html { get; set; } = null!;
 
-        //[ForeignKey("BugId")]
-        //public ReportModel Bug { get; set; }
+        [ForeignKey(nameof(Bug))]
         public long BugId { get; set; }
+        public ReportModel Bug { get; set; } = null!;
     }
 }

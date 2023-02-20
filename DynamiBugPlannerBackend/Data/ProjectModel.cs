@@ -17,11 +17,13 @@ namespace DynamiBugPlannerBackend.Data
         public bool IsArchived { get; set; } = false!;
 
         // [ForeignKey(nameof(User))]
+        // public string? UserId { get; set; }
         // public UserModel User { get; set; } = null!;
-        // public string? UserName { get; set; }
 
-        // [ForeignKey(nameof(Github))]
-        // public GithubModel Github { get; set; } = null!;
+        // [ForeignKey(nameof(Github))]        
         // public long? GithubId { get; set; }
+        // public GithubRepositoryModel Repository { get; set; } = null!;
+
+        public virtual IList<ReportModel>? Reports { get; set; }
     }
 }
