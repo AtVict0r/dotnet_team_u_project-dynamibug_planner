@@ -26,7 +26,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Plans
-        [HttpGet]
+        [HttpGet(Name = "GetPlans")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPlans()
@@ -70,7 +70,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // POST: api/Plans
         // [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost(Name = "CreatePlan")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -97,7 +97,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // PUT: api/Plans/5
         // [Authorize(Roles = "Admin")]
-        [HttpPut("{id:long}")]
+        [HttpPut("{id:long}", Name = "UpdatePlan")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -132,7 +132,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // DELETE: api/Plans/5
         // [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeletePlan")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

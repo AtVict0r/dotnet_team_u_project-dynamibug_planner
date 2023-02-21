@@ -9,267 +9,294 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  CreateBugFixDTO,
-  CreateCommentDTO,
-  CreateProjectDTO,
-  CreateReportDTO,
-  ProblemDetails,
-  UpdateBugFixDTO,
-  UpdateProjectDTO,
-  UpdateReportDTO,
-} from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
-
-export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
-
+import { ContentType, HttpClient } from "./http-client";
+export class BugPlannerApi extends HttpClient {
   /**
    * No description
    *
    * @tags Comments
    * @name CreateComment
    * @request POST:/api/Comments
+   * @response `200` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `500` `void` Server Error
    */
-  createComment = (data: CreateCommentDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  createComment = (data, params = {}) =>
+    this.request({
       path: `/api/Comments`,
       method: "POST",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Comments
    * @name DeleteComment
    * @request DELETE:/api/Comments/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  deleteComment = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  deleteComment = (id, params = {}) =>
+    this.request({
       path: `/api/Comments/${id}`,
       method: "DELETE",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Plans
    * @name GetPlans
    * @request GET:/api/Plans
+   * @response `200` `void` Success
+   * @response `500` `void` Server Error
    */
-  getPlans = (params: RequestParams = {}) =>
-    this.request<void, void>({
+  getPlans = (params = {}) =>
+    this.request({
       path: `/api/Plans`,
       method: "GET",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Plans
    * @name CreatePlan
    * @request POST:/api/Plans
+   * @response `201` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `500` `void` Server Error
    */
-  createPlan = (data: CreateBugFixDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  createPlan = (data, params = {}) =>
+    this.request({
       path: `/api/Plans`,
       method: "POST",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Plans
    * @name GetPlan
    * @request GET:/api/Plans/{id}
+   * @response `200` `void` Success
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  getPlan = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  getPlan = (id, params = {}) =>
+    this.request({
       path: `/api/Plans/${id}`,
       method: "GET",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Plans
    * @name UpdatePlan
    * @request PUT:/api/Plans/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  updatePlan = (id: number, data: UpdateBugFixDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  updatePlan = (id, data, params = {}) =>
+    this.request({
       path: `/api/Plans/${id}`,
       method: "PUT",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Plans
    * @name DeletePlan
    * @request DELETE:/api/Plans/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  deletePlan = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  deletePlan = (id, params = {}) =>
+    this.request({
       path: `/api/Plans/${id}`,
       method: "DELETE",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Projects
    * @name GetProjects
    * @request GET:/api/Projects
+   * @response `200` `void` Success
+   * @response `500` `void` Server Error
    */
-  getProjects = (params: RequestParams = {}) =>
-    this.request<void, void>({
+  getProjects = (params = {}) =>
+    this.request({
       path: `/api/Projects`,
       method: "GET",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Projects
    * @name CreateProject
    * @request POST:/api/Projects
+   * @response `201` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `500` `void` Server Error
    */
-  createProject = (data: CreateProjectDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  createProject = (data, params = {}) =>
+    this.request({
       path: `/api/Projects`,
       method: "POST",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Projects
    * @name GetProject
    * @request GET:/api/Projects/{id}
+   * @response `200` `void` Success
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  getProject = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  getProject = (id, params = {}) =>
+    this.request({
       path: `/api/Projects/${id}`,
       method: "GET",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Projects
    * @name UpdateProject
    * @request PUT:/api/Projects/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  updateProject = (id: number, data: UpdateProjectDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  updateProject = (id, data, params = {}) =>
+    this.request({
       path: `/api/Projects/${id}`,
       method: "PUT",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Projects
    * @name DeleteProject
    * @request DELETE:/api/Projects/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  deleteProject = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  deleteProject = (id, params = {}) =>
+    this.request({
       path: `/api/Projects/${id}`,
       method: "DELETE",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Reports
    * @name GetReports
    * @request GET:/api/Reports
+   * @response `200` `void` Success
+   * @response `500` `void` Server Error
    */
-  getReports = (params: RequestParams = {}) =>
-    this.request<void, void>({
+  getReports = (params = {}) =>
+    this.request({
       path: `/api/Reports`,
       method: "GET",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Reports
    * @name CreateReport
    * @request POST:/api/Reports
+   * @response `201` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `500` `void` Server Error
    */
-  createReport = (data: CreateReportDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  createReport = (data, params = {}) =>
+    this.request({
       path: `/api/Reports`,
       method: "POST",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Reports
    * @name GetReport
    * @request GET:/api/Reports/{id}
+   * @response `200` `void` Success
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  getReport = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  getReport = (id, params = {}) =>
+    this.request({
       path: `/api/Reports/${id}`,
       method: "GET",
       ...params,
     });
-
   /**
    * No description
    *
    * @tags Reports
    * @name UpdateReport
    * @request PUT:/api/Reports/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  updateReport = (id: number, data: UpdateReportDTO, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  updateReport = (id, data, params = {}) =>
+    this.request({
       path: `/api/Reports/${id}`,
       method: "PUT",
       body: data,
       type: ContentType.Json,
       ...params,
     });
-    
   /**
    * No description
    *
    * @tags Reports
    * @name DeleteReport
    * @request DELETE:/api/Reports/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
    */
-  deleteReport = (id: number, params: RequestParams = {}) =>
-    this.request<void, ProblemDetails | void>({
+  deleteReport = (id, params = {}) =>
+    this.request({
       path: `/api/Reports/${id}`,
       method: "DELETE",
       ...params,

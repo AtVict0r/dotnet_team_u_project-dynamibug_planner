@@ -26,7 +26,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Reports
-        [HttpGet]
+        [HttpGet(Name = "GetReports")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetReports()
@@ -70,7 +70,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // POST: api/Reports
         // [Authorize]
-        [HttpPost]
+        [HttpPost(Name = "CreateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -90,14 +90,13 @@ namespace DynamiBugPlannerBackend.Controllers
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
             }
         }
 
         // PUT: api/Reports/5
         // [Authorize]
-        [HttpPut("{id:long}")]
+        [HttpPut("{id:long}", Name = "UpdateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -132,7 +131,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // DELETE: api/Reports/5
         // [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

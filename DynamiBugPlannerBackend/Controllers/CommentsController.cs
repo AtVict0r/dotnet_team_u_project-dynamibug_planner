@@ -27,7 +27,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // POST: api/Comments
         // [Authorize]
-        [HttpPost]
+        [HttpPost(Name = "CreateComment")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -54,7 +54,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
         // DELETE: api/Comments/5
         // [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteComment")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

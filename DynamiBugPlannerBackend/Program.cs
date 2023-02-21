@@ -8,9 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson(op => 
+builder.Services.AddControllers().AddNewtonsoftJson(op =>
     op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
+
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("AllowAll", builder =>
+    builder.AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+});
 
 builder.Services.AddDbContext<DatabaseContext>(opt =>
     opt.UseInMemoryDatabase("DynamiBugPlanner"));
@@ -32,6 +40,8 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("AllowAll");
+
     app.UseSwagger();
     app.UseSwaggerUI();
 }

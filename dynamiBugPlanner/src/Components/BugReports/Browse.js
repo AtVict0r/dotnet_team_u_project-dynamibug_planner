@@ -1,6 +1,36 @@
 import './Browse.css';
+import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
+import React, { useEffect, useState } from "react";
+
+const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
+// const URI = "https://localhost:7227/api/Reports"
 
 export default function Browse() {
+
+    // const [reports, setReports] = useState(0);
+
+    useEffect(() => {
+        const fetchReports = async () => {
+            const result = await api.getReports();
+            result.json().then(json => {
+                console.log(json);
+            })
+        }
+        fetchReports();
+    }, [])
+
+    // useEffect(() => { 
+    //     const fetchReports = async () => {
+    //         const result = await fetch(URI);
+    //         result.json().then(json => {
+    //             console.log(json);
+    //     })
+
+    //     }
+    //     fetchReports();
+    // }, [])
+
+
     return (
         <div className="container">
             <h1>Browse</h1>
@@ -29,17 +59,7 @@ export default function Browse() {
                         <option value="Enhancement">Enhancement</option>
                         <option value="Help">Help</option>
                         <option value="Question">Question</option>
-                    </select>
-                </div>
-                <div className="col-25">
-                    <label className="Blabel" htmlFor="reportPriority">Priority: </label>
-                    <select id="reportPriority">
-                        <option value="">All</option>
-                        <option value="Unconfirmed">Unconfirmed</option>
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                        <option value="Immediate">Immediate</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div className="col-25">
@@ -54,39 +74,21 @@ export default function Browse() {
                         <option value="Archived">Archived</option>
                     </select>
                 </div>
+                <div className="col-25">
+                    <label className="Blabel" htmlFor="reportPriority">Priority: </label>
+                    <select id="reportPriority">
+                        <option value="">All</option>
+                        <option value="Unconfirmed">Unconfirmed</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Immediate">Immediate</option>
+                    </select>
+                </div>
             </div>
             <br />
             <div>
-                <table class="table caption-top">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Larry</td>
-                            <td>the Bird</td>
-                            <td>@twitter</td>
-                        </tr>
-                    </tbody>
-                </table>
+                {/* <ListReports reports={reports} /> */}
             </div>
         </div>
     );
