@@ -481,6 +481,33 @@
         }
       }
     },
+    "/api/Projects/{names}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "operationId": "GetProjectNames",
+        "parameters": [
+          {
+            "name": "names",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "names"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/api/Projects/{id}": {
       "get": {
         "tags": [
@@ -956,45 +983,6 @@
           }
         }
       }
-    },
-    "/WeatherForecast": {
-      "get": {
-        "tags": [
-          "WeatherForecast"
-        ],
-        "operationId": "GetWeatherForecast",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -1071,6 +1059,14 @@
           },
           "description": {
             "type": "string"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifyDate": {
+            "type": "string",
+            "format": "date-time"
           },
           "projectId": {
             "type": "integer",
@@ -1169,14 +1165,6 @@
           "description": {
             "type": "string"
           },
-          "projectId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
           "status": {
             "type": "string",
             "nullable": true
@@ -1188,29 +1176,6 @@
           "modifyDate": {
             "type": "string",
             "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "WeatherForecast": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "temperatureC": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "temperatureF": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false

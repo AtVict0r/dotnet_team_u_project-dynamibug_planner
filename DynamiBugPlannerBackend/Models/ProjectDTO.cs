@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DynamiBugPlannerBackend.Models
 {
+    public class ProjectNamesDTO 
+    {
+        public long Id { get; set; }
+        public string Name { get; set; } = null!;
+    }
+
     public class CreateProjectDTO
     {
         [Required]
@@ -14,7 +20,7 @@ namespace DynamiBugPlannerBackend.Models
     public class UpdateProjectDTO : CreateProjectDTO 
     {
         public long Id { get; set; }
-        public bool IsArchived { get; set; }
+        public bool IsArchived { get; set; } = false!;
     }
 
     public class ProjectDTO : UpdateProjectDTO

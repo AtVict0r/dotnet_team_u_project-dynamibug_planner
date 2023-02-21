@@ -10,17 +10,17 @@ namespace DynamiBugPlannerBackend.Data
 
         public string Type { get; set; } = null!;
 
-        public string Status { get; set; } = "New";
+        public string Status { get; set; } = null!;
         
-        public string Priority { get; set; } = "Unconfirmed";
+        public string Priority { get; set; } = null!;
 
         public string Title { get; set; } = null!;
 
         public string Description { get; set; } = null!;
         
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime CreateDate { get; set; } = DateTime.Now!;
 
-        public DateTime? ModifyDate { get; set; }
+        public DateTime? ModifyDate { get; set; } = DateTime.Now!;
 
         // [ForeignKey(nameof(User))]
         // public string UserName { get; set; } = null!;

@@ -29,8 +29,26 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var projects = await _unitOfWork.Projects.GetAll();
+                var projects = await _unitOfWork.Projects.GetAll(includes: new List<string> { "Reports" });
                 var results = _mapper.Map<IList<ProjectDTO>>(projects);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        // GET: api/Projects/names
+        [HttpGet("{names:alpha}", Name = "GetProjectNames")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetProjectNames(string names = "names")
+        {
+            try
+            {
+                var projects = await _unitOfWork.Projects.GetAll();
+                var results = _mapper.Map<IList<ProjectNamesDTO>>(projects);
                 return Ok(results);
             }
             catch (Exception ex)

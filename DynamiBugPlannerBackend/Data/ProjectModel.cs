@@ -14,7 +14,7 @@ namespace DynamiBugPlannerBackend.Data
         public string? Description { get; set; }
 
         [Column(TypeName = "VARCHAR(5)")]
-        public bool IsArchived { get; set; } = false!;
+        public bool IsArchived { get; set; } 
 
         // [ForeignKey(nameof(User))]
         // public string? UserId { get; set; }

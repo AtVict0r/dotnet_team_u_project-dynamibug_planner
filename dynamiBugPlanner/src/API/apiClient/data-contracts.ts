@@ -16,29 +16,29 @@ export interface CreateBugFixDTO {
   /** @format int64 */
   userId?: number;
 }
-
 export interface CreateCommentDTO {
   /** @format multiline */
   comment: string;
   /** @format int64 */
   bugId?: number;
 }
-
 export interface CreateProjectDTO {
   name: string;
   description?: string | null;
   /** @format int64 */
   githubId?: number | null;
 }
-
 export interface CreateReportDTO {
   type: string;
   title: string;
   description: string;
+  /** @format date-time */
+  createDate?: string;
+  /** @format date-time */
+  modifyDate?: string;
   /** @format int64 */
   projectId?: number;
 }
-
 export interface ProblemDetails {
   type?: string | null;
   title?: string | null;
@@ -48,7 +48,6 @@ export interface ProblemDetails {
   instance?: string | null;
   [key: string]: any;
 }
-
 export interface UpdateBugFixDTO {
   html?: string | null;
   /** @format int64 */
@@ -56,7 +55,6 @@ export interface UpdateBugFixDTO {
   /** @format int64 */
   userId?: number;
 }
-
 export interface UpdateProjectDTO {
   name: string;
   description?: string | null;
@@ -66,15 +64,10 @@ export interface UpdateProjectDTO {
   id?: number;
   isArchived?: boolean;
 }
-
 export interface UpdateReportDTO {
   type: string;
   title: string;
   description: string;
-  /** @format int64 */
-  projectId?: number;
-  /** @format int64 */
-  id?: number;
   status?: string | null;
   priority?: string | null;
   /** @format date-time */

@@ -21,14 +21,10 @@ function NavCard({ src, title }) {
 
 export default function Home() {
   return (
-    <>
-      <a className="nav-link" href="/Browse"
-        style={{
-          marginTop: "15vh",
-        }}
-      >
-        <SearchBar />
-      </a>
+    <div style={{
+      marginTop: "15vh",
+    }}>
+      <SearchBar />
       <div
         style={{
           marginTop: "10vh",
@@ -38,18 +34,18 @@ export default function Home() {
         }}
       >
         <a className="nav-link" href="/Add">
-        <NavCard src="https://via.placeholder.com/50" title="Add" />
+          <NavCard src="https://via.placeholder.com/50" title="Add" />
         </a>
         <a className="nav-link" href="/Browse">
           <NavCard src="https://via.placeholder.com/50" title="Browse" />
         </a>
         <a className="nav-link" href="/Email">
-        <NavCard src="https://via.placeholder.com/50" title="Contact" />
-        </a>        
+          <NavCard src="https://via.placeholder.com/50" title="Contact" />
+        </a>
         <a className="nav-link" href="/Projects">
-        <NavCard src="https://via.placeholder.com/50" title="Documentation" />
+          <NavCard src="https://via.placeholder.com/50" title="Documentation" />
         </a>
       </div>
-    </>
+    </div>
   );
 }

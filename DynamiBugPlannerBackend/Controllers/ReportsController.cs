@@ -33,7 +33,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var reports = await _unitOfWork.Reports.GetAll();
+                var reports = await _unitOfWork.Reports.GetAll(includes: new List<string> { "Project", "Plan", "Comments" });
                 var results = _mapper.Map<IList<ReportDTO>>(reports);
                 return Ok(results);
             }
@@ -103,7 +103,7 @@ namespace DynamiBugPlannerBackend.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateReport(long id, [FromBody] UpdateReportDTO reportDTO)
         {
-            if (!ModelState.IsValid || id < 1 || id != reportDTO.Id)
+            if (!ModelState.IsValid || id < 1)
             {
                 return BadRequest(ModelState);
             }

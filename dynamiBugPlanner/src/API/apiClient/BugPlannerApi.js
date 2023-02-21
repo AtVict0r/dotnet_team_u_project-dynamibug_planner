@@ -168,6 +168,21 @@ export class BugPlannerApi extends HttpClient {
    * No description
    *
    * @tags Projects
+   * @name GetProjectNames
+   * @request GET:/api/Projects/{names}
+   * @response `200` `void` Success
+   * @response `500` `void` Server Error
+   */
+  getProjectNames = (params = {}) =>
+    this.request({
+      path: `/api/Projects/names`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Projects
    * @name GetProject
    * @request GET:/api/Projects/{id}
    * @response `200` `void` Success

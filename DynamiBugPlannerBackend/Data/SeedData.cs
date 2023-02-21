@@ -22,7 +22,7 @@ public static class SeedData
 
             SeedProjects(context);
 
-            SeedReports(context);
+            SeedReports(context, 100);
         }
     }
 
@@ -56,7 +56,7 @@ public static class SeedData
 
         for (int i = 1; i <= size; i++)
         {
-            for (int j = 1; j <= Random.Shared.Next(1, context.Projects.Count()); j++)
+            for (int j = 1; j <= context.Projects.Count(); j++)
             {
                 myReports.Add(
                     new ReportModel
