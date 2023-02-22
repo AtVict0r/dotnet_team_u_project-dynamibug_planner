@@ -1,6 +1,5 @@
 import { FormControl } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import Stack from "react-bootstrap/Stack";
 import React, { useEffect, useState } from "react";
 
@@ -12,13 +11,6 @@ function useSessionStorage(key, defaultValue = "") {
       window.sessionStorage.setItem(key, state);
   }, [key, state]);
   return [state, setState];
-}
-
-function resetFilter() {
-  sessionStorage.setItem("projectName", "");
-  sessionStorage.setItem("reportType", "");
-  sessionStorage.setItem("reportStatus", "");
-  sessionStorage.setItem("reportPriority", "");
 }
 
 /**
@@ -34,7 +26,7 @@ export default function SearchBar() {
       gap={3}
       style={{ width: "80%" }}
     >
-      <Form.Control
+      <FormControl
       id = "navSearchBar"
         className="me-auto"
         placeholder="Search for your bug here..."
@@ -42,10 +34,13 @@ export default function SearchBar() {
         onChange={(event) => {
           setNavSearchBar(event.target.value);
       }}
+      onKeyUp={(event) => {
+        if(navSearchBar === ""){
+          window.location.reload();
+        }
+      }}
       />
-      <a className="nav-link" href="/Browse">
-      <Button variant="secondary" onClick={resetFilter}>Submit</Button>
-      </a>
+      <a className="btn btn-secondary" href={`/Browse?${navSearchBar}`}>Submit</a>
     </Stack>
   );
   }

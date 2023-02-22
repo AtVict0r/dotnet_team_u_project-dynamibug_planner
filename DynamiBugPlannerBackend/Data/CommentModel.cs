@@ -8,7 +8,7 @@ namespace DynamiBugPlannerBackend.Data
         [Key]
         public long Id { get; set; }
         public string Comment { get; set; } = null!;
-        public DateTime CreateDate { get; set; } = DateTime.Now!;
+        public DateTime CreateDate { get; set; }
 
         // [ForeignKey(nameof(User))]
         // public string UserId { get; set; } = null!;

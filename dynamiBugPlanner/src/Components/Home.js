@@ -1,7 +1,5 @@
 import SearchBar from "./SearchBar";
 import Card from "react-bootstrap/Card";
-import AddReport from "./BugReports/AddReport";
-import Contact from "./ContactForm";
 
 function NavCard({ src, title }) {
   return (

@@ -22,7 +22,7 @@ public static class SeedData
 
             SeedProjects(context);
 
-            SeedReports(context, 100);
+            SeedReports(context);
         }
     }
 

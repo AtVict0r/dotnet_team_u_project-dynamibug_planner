@@ -12,6 +12,7 @@ import Add from "./Components/BugReports/AddReport";
 import Contact from "./Components/ContactForm";
 import NoPage from "./Components/NoPage";
 import Projects from "./Components/AdminPage/AdminProjects";
+import Report from "./Components/BugReports/ReportDetails";
 import Plan from "./Components/AdminPage/PlanFix";
 import Archive from "./Components/AdminPage/ArchivedReports";
 import Users from "./Components/AdminPage/ListUsers";
@@ -25,13 +26,14 @@ let user = {
 export default function Page() {
   return (
     <BrowserRouter>
-      {user.role == "admin" ? <SideBar /> : <></>}
+      {user.role === "admin" ? <SideBar /> : <></>}
       <Routes>
         <Route path="/" element={<NavBar />}>
           <Route index element={<Home />} />
           <Route path="/Add" element={<Add />} />
           <Route path="/Browse" element={<Browse />} />
           <Route path="/Email" element={<Contact />} />
+          <Route path="/Report" element={<Report />} />
           <Route path="/Projects" element={<Projects />} />
           <Route path="/Plan" element={<Plan />} />
           <Route path="/Archive" element={<Archive />} />

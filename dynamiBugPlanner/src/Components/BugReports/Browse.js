@@ -1,4 +1,5 @@
 import "./Browse.css";
+import Table from 'react-bootstrap/Table';
 import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
 import React, { useEffect, useState } from "react";
 
@@ -25,13 +26,13 @@ function ListProjectName({ projectNames }) {
 }
 
 function ReportTable() {
-  const [projectName, setProjectName] = useSessionStorage("projectName");
-  const [reportType, setReportType] = useSessionStorage("reportType");
-  const [reportStatus, setReportStatus] = useSessionStorage("reportStatus");
-  const [reportPriority, setReportPriority] =
-    useSessionStorage("reportPriority");
+  const [projectName, setProjectName] = useState("");
+  const [reportType, setReportType] = useState("");
+  const [reportStatus, setReportStatus] = useState("");
+  const [reportPriority, setReportPriority] = useState("");
   const [reports, setReports] = useState([]);
   const [listProject, setListProject] = useState([]);
+  const [reportTitle, setReportTitle] = useState(window.sessionStorage.getItem("navSearchBar"));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,31 +50,30 @@ function ReportTable() {
   }, []);
 
   let filteredReports = reports;
-  let sessionReportTitle = sessionStorage.getItem("navSearchBar");
-  if (sessionReportTitle != null && sessionReportTitle != "") {
+  if (reportTitle !== null && reportTitle !== "") {
+    // window.location.href = "/Browse";
     filteredReports = filteredReports.filter((report) => {
-      return report.title.includes(sessionReportTitle);
-    });
-    // sessionStorage.setItem("navSearchBar", "");
-  }
-  if (projectName != null && projectName != "") {
-    filteredReports = filteredReports.filter((report) => {
-      return report.project.name == projectName;
+      return report.title.toLowerCase().includes(reportTitle.toLowerCase());
     });
   }
-  if (reportType != null && reportType != "") {
+  if (projectName !== null && projectName !== "") {
     filteredReports = filteredReports.filter((report) => {
-      return report.type == reportType;
+      return report.project.name === projectName;
     });
   }
-  if (reportStatus != null && reportStatus != "") {
+  if (reportType !== null && reportType !== "") {
     filteredReports = filteredReports.filter((report) => {
-      return report.status == reportStatus;
+      return report.type === reportType;
     });
   }
-  if (reportPriority != null && reportPriority != "") {
+  if (reportStatus !== null && reportStatus !== "") {
     filteredReports = filteredReports.filter((report) => {
-      return report.priority == reportPriority;
+      return report.status === reportStatus;
+    });
+  }
+  if (reportPriority !== null && reportPriority !== "") {
+    filteredReports = filteredReports.filter((report) => {
+      return report.priority === reportPriority;
     });
   }
 
@@ -81,8 +81,16 @@ function ReportTable() {
     const date = new Date(report.modifyDate);
     return (
       <tr key={report.id}>
-        <td>{report.project.name}</td>
-        <td>{report.title}</td>
+        <td>
+          <a href={`/Project?${report.project.id}`}>
+            {report.project.name}
+          </a>
+        </td>
+        <td>
+          <a href={`/Report?${report.id}`}>
+            {report.title}
+          </a>
+        </td>
         <td>{report.type}</td>
         <td>{report.status}</td>
         <td>{report.priority}</td>
@@ -173,7 +181,7 @@ function ReportTable() {
       <a href="/Add">Create New Bug Report</a>
       <br />
       <div>
-        <table>
+        <Table>
           <thead>
             <tr>
               <th>Project Name</th>
@@ -186,7 +194,7 @@ function ReportTable() {
             </tr>
           </thead>
           <tbody>{listReports}</tbody>
-        </table>
+        </Table>
       </div>
     </>
   );

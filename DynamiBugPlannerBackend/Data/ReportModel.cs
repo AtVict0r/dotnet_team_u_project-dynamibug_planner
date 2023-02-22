@@ -10,9 +10,9 @@ namespace DynamiBugPlannerBackend.Data
 
         public string Type { get; set; } = null!;
 
-        public string Status { get; set; } = null!;
+        public string Status { get; set; } = "New"!;
         
-        public string Priority { get; set; } = null!;
+        public string Priority { get; set; }  = "Unconfirmed"!;
 
         public string Title { get; set; } = null!;
 
