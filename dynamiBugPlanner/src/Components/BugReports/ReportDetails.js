@@ -1,3 +1,4 @@
+import './ReportDetails.css';
 import React, { useEffect, useState } from "react";
 import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
 import ListComments from "../Comments/GetComments";
@@ -30,7 +31,7 @@ function showAddComment() {
 
 function DisplayReport({ id }) {
     const [report, setReport] = useState();
-    useEffect((id) => {
+    useEffect(() => {
         const fetchData = async () => {
             let result = await api.getReport(id);
             result
@@ -39,47 +40,43 @@ function DisplayReport({ id }) {
                 .catch((err) => console.log(err.message));
         };
         fetchData();
-    }, []);
+    });
 
     if (typeof report !== 'undefined' && report !== null) {
         return (
-            <div>
+            <div className="container RDcontainer">
                 <a href={`/EditReport?${report.id}`}>Edit Report</a>
-                <div>
-                    <label>Id: </label>{" "}
-                    <input type="number" value={report.id} readOnly />
+                <div className="row RDrow">
+                    <label className="RDlabel col-15">Id: </label>{" "}
+                    <input className="RDinput col-25" type="number" value={report.id} readOnly />
+                    <label className="RDlabel col-15">Type: </label>{" "}
+                    <input className="RDinput col-25" type="text" value={report.type} readOnly />
                 </div>
-                <div>
-                    <label>Type: </label>{" "}
-                    <input type="text" value={report.type} readOnly />
+                <div className="row">
+                    <label className="RDlabel col-15">Status: </label>{" "}
+                    <input className="RDinput col-25" type="text" value={report.status} readOnly />
+                    <label className="RDlabel col-15">Priority: </label>{" "}
+                    <input className="RDinput col-25" type="text" value={report.priority} readOnly />
                 </div>
-                <div>
-                    <label>Status: </label>{" "}
-                    <input type="text" value={report.status} readOnly />
+                <div className="row">
+                    <label className="RDlabel col-15">Title: </label>{" "}
+                    <input className="RDinput col-75" type="text" value={report.title} readOnly />
                 </div>
-                <div>
-                    <label>Priority: </label>{" "}
-                    <input type="text" value={report.priority} readOnly />
+                <div className="row">
+                    <label className="RDlabel col-15">Description: </label>{" "}
+                    <textarea rows="10" cols="70" className="RDinput col-75" value={report.description} readOnly />
                 </div>
-                <div>
-                    <label>Title: </label>{" "}
-                    <input type="text" value={report.title} readOnly />
+                <div className="row">
+                    <label className="RDlabel col-15">Created Date: </label>{" "}
+                    <input className="RDinput col-35" type="text" value={new Date(report.createDate)} readOnly />
                 </div>
-                <div>
-                    <label>Description: </label>{" "}
-                    <textarea value={report.description} readOnly />
+                <div className="row">
+                    <label className="RDlabel col-15">Modified Date: </label>{" "}
+                    <input className="RDinput col-35" type="text" value={new Date(report.modifyDate)} readOnly />
                 </div>
-                <div>
-                    <label>Created Date: </label>{" "}
-                    <input type="text" value={new Date(report.createDate)} readOnly />
-                </div>
-                <div>
-                    <label>Modified Date: </label>{" "}
-                    <input type="text" value={new Date(report.modifyDate)} readOnly />
-                </div>
-                <a href={`/Project?${report.project.id}`}>Goto Project</a>
-                {(report.plan !== null)? <a href={`/Plan?${report.plan.id}`}>Goto Plan</a> : <></>}
-                <input type="button" className="btn btn-primary" onClick={showAddComment} value="Add Comment" />
+                <a href={`/Project?${report.project.id}`} className="btn btn-primary RDbutton">Goto Project</a>
+                {(report.plan !== null)? <a href={`/Plan?${report.plan.id}`} className="btn btn-primary RDbutton">Goto Plan</a> : <></>}
+                <input type="button" className="btn btn-primary RDbutton" onClick={showAddComment} value="Add Comment" />
                 <ListComments comments={report.comments} />
             </div>
         );

@@ -1,15 +1,16 @@
+import './GetComments.css';
 function ShowComments({ comments }) {
     if (comments.length !== 0) {
         return comments.map((c) => {
             return (
                 <div key={c.id}>
-                    <div>
-                        <label>Date: </label>{" "}
-                        <input type="text" value={new Date(c.createDate)} readOnly />
+                    <div className="row Crow">
+                        <label className="Clabel">Date: </label>{" "}
+                        <input className="Cdate" type="text" value={new Date(c.createDate)} readOnly />
                     </div>
-                    <div>
-                        <label>Comment: </label>{" "}
-                        <textarea value={c.comment} readOnly />
+                    <div className="row Crow">
+                        <label className="Clabel">Comment: </label>{" "}
+                        <textarea className="Ctextarea" rows="5" value={c.comment} readOnly />
                     </div>
                 </div>
             );

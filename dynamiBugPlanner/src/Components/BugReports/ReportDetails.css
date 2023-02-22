@@ -1,0 +1,49 @@
+.RDcontainer {
+    position: relative;
+    margin-top: 3rem;
+}
+
+.RDlabel {
+    padding-bottom: 2rem;
+    display: inline-block;
+    font: bold 1rem arial, verdana;
+}
+.RDrow{
+    
+}
+.col-10{
+    width:10%;
+}
+
+.col-15 {
+    width: 15%;
+    min-width: 9rem;
+}
+
+.col-25{
+    width:25%;
+}
+
+.col-35 {
+    width: 35%;
+}
+
+.col-75 {
+    width: 75%;
+}
+
+.RDinput {
+    left: 10rem;
+    margin-bottom: 1rem;
+}
+
+.RDcheckbox {
+    max-width: 1rem;
+    max-height: 1rem;
+}
+
+.RDbutton {
+    margin-left: 2rem;
+    width: 10%;
+    min-width: 8rem;
+}
