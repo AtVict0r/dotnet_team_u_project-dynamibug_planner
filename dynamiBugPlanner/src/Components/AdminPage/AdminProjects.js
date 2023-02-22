@@ -2,8 +2,8 @@ import Card from 'react-bootstrap/Card';
 
 function BasicExample() {
   return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Img variant="top" src="https://via.placeholder.com/50" />
+    <Card style={{ width: '10rem' }}>
+      <Card.Img variant="top" src="https://via.placeholder.com/1" />
       <Card.Body>
         <Card.Title>Card Title</Card.Title>
         <Card.Text>

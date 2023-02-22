@@ -5,16 +5,6 @@ import React, { useEffect, useState } from "react";
 
 const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
-function useSessionStorage(key, defaultValue = "") {
-  const [state, setState] = useState(() => {
-    return window.sessionStorage.getItem(key) || defaultValue;
-  });
-  useEffect(() => {
-    window.sessionStorage.setItem(key, state);
-  }, [key, state]);
-  return [state, setState];
-}
-
 function ListProjectName({ projectNames }) {
   return projectNames.map((projectName) => {
     return (
@@ -32,7 +22,7 @@ function ReportTable() {
   const [reportPriority, setReportPriority] = useState("");
   const [reports, setReports] = useState([]);
   const [listProject, setListProject] = useState([]);
-  const [reportTitle, setReportTitle] = useState(window.sessionStorage.getItem("navSearchBar"));
+  const [reportTitle] = useState(window.sessionStorage.getItem("navSearchBar"));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,7 +41,6 @@ function ReportTable() {
 
   let filteredReports = reports;
   if (reportTitle !== null && reportTitle !== "") {
-    // window.location.href = "/Browse";
     filteredReports = filteredReports.filter((report) => {
       return report.title.toLowerCase().includes(reportTitle.toLowerCase());
     });

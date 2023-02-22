@@ -30,7 +30,7 @@ function showAddComment() {
 
 function DisplayReport({ id }) {
     const [report, setReport] = useState();
-    useEffect(() => {
+    useEffect((id) => {
         const fetchData = async () => {
             let result = await api.getReport(id);
             result
