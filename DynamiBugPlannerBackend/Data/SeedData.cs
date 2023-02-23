@@ -76,7 +76,7 @@ public static class SeedData
                     new BugFixModel
                     {
                         Html = $"<p>Bug Fix for report {count}<p>",
-                        BugId = count
+                        ReportId = count
                     }
                 );
 
@@ -84,7 +84,7 @@ public static class SeedData
                      new CommentModel
                      {
                          Comment = $"This is a comment for bug report {count}",
-                         BugId = count
+                         ReportId = count
                      }
                 );
             }

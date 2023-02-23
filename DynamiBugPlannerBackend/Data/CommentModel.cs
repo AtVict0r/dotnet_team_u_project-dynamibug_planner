@@ -15,8 +15,8 @@ namespace DynamiBugPlannerBackend.Data
         // public string UserId { get; set; } = null!;
         // public UserModel User { get; set; } = null!;
 
-        [ForeignKey(nameof(Bug))]
-        public long BugId { get; set; }
-        public ReportModel Bug { get; set; } = null!;
+        [ForeignKey(nameof(Report))]
+        public long ReportId { get; set; }
+        public ReportModel Report { get; set; } = null!;
     }
 }

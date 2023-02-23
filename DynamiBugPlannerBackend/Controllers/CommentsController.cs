@@ -33,7 +33,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var comments = await _unitOfWork.Comments.GetAll();
+                var comments = await _unitOfWork.Comments.GetAll(includes: new List<string> { "Report" });
                 var results = _mapper.Map<IList<CommentDTO>>(comments);
                 return Ok(results);
             }

@@ -33,7 +33,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var plans = await _unitOfWork.Plans.GetAll();
+                var plans = await _unitOfWork.Plans.GetAll(includes: new List<string> { "Report" });
                 var results = _mapper.Map<IList<BugFixDTO>>(plans);
                 return Ok(results);
             }

@@ -33,7 +33,7 @@ export default function UpdateReport() {
     putData();
   };
 
-  if (id === reportStorage.id) {
+  if (id == reportStorage.id) {
     return (
       <div className="container">
         <h4>Update Report</h4>

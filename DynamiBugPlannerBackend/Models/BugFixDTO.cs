@@ -7,7 +7,7 @@ namespace DynamiBugPlannerBackend.Models
     public class CreateBugFixDTO
     {
         public string Html { get; set; } = null!;
-        public long BugId { get; set; }
+        public long ReportId { get; set; }
         public long UserId { get; set; }
     }
 

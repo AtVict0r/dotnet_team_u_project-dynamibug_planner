@@ -27,7 +27,7 @@ export default function AddProject() {
     putData();
   };
 
-  if (id === projectStorage.id) {
+  if (id == projectStorage.id) {
     return (
       <div className="container">
         <h4>Add Report</h4>
