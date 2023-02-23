@@ -29,12 +29,14 @@ function ReportTable() {
       let result = await api.getReports();
       result.json().then((json) => {
         setReports(json);
-      });
+      })
+      .catch((err) => console.log(err.message));;
 
       result = await api.getProjectNames();
       result.json().then((json) => {
         setListProject(json);
-      });
+      })
+      .catch((err) => console.log(err.message));;
     };
     fetchData();
   }, []);
@@ -167,7 +169,7 @@ function ReportTable() {
         </div>
       </div>
       <br />
-      <a href="/Add">Create New Bug Report</a>
+      <a href="/NewReport">Create New Bug Report</a>
       <br />
       <div>
         <Table>

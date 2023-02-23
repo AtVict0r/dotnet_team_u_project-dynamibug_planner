@@ -7,16 +7,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./Components/NavBar";
 import SideBar from "./Components/AdminPage/SideBar";
 import Home from "./Components/Home";
+import AddReport from "./Components/BugReports/AddReport";
 import Browse from "./Components/BugReports/Browse";
-import Add from "./Components/BugReports/AddReport";
+import Report from "./Components/BugReports/ReportDetails";
+import UpdateReport from "./Components/BugReports/UpdateReport";
+import AddProject from "./Components/AdminPage/AddProject";
+import Projects from "./Components/AdminPage/AdminProjects";
+import Project from "./Components/AdminPage/ProjectDetail";
+import Plan from "./Components/AdminPage/PlanFix";
 import Contact from "./Components/ContactForm";
 import NoPage from "./Components/NoPage";
-import Projects from "./Components/AdminPage/AdminProjects";
-import Report from "./Components/BugReports/ReportDetails";
-import Plan from "./Components/AdminPage/PlanFix";
-import Archive from "./Components/AdminPage/ArchivedReports";
-import Users from "./Components/AdminPage/ListUsers";
-import Github from "./Components/AdminPage/GithubProjects";
 import Footer from "./Components/Footer";
 
 let user = {
@@ -30,15 +30,15 @@ export default function Page() {
       <Routes>
         <Route path="/" element={<NavBar />}>
           <Route index element={<Home />} />
-          <Route path="/Add" element={<Add />} />
+          <Route path="/NewReport" element={<AddReport />} />
           <Route path="/Browse" element={<Browse />} />
-          <Route path="/Email" element={<Contact />} />
           <Route path="/Report" element={<Report />} />
+          <Route path="/EditReport" element={<UpdateReport />} />
+          <Route path="/NewProject" element={<AddProject />} />
           <Route path="/Projects" element={<Projects />} />
+          <Route path="/Project" element={<Project />} />
           <Route path="/Plan" element={<Plan />} />
-          <Route path="/Archive" element={<Archive />} />
-          <Route path="/Users" element={<Users />} />
-          <Route path="/Github" element={<Github />} />
+          <Route path="/Email" element={<Contact />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

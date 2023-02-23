@@ -31,7 +31,7 @@ export default function Home() {
           flexDirection: "row",
         }}
       >
-        <a className="nav-link" href="/Add">
+        <a className="nav-link" href="/NewReport">
           <NavCard src="https://via.placeholder.com/50" title="Add" />
         </a>
         <a className="nav-link" href="/Browse">

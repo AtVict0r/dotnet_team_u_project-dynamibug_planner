@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,7 +9,7 @@ namespace DynamiBugPlannerBackend.Data
         [Key]
         public long Id { get; set; }
         public string Comment { get; set; } = null!;
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now!;
 
         // [ForeignKey(nameof(User))]
         // public string UserId { get; set; } = null!;
