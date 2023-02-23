@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DynamiBugPlannerBackend.Models
 {
@@ -13,24 +12,26 @@ namespace DynamiBugPlannerBackend.Models
         [Required]
         public string Description { get; set; } = null!;
         public long ProjectId { get; set; }
-        public DateTime CreateDate { get; set; }  = DateTime.Now!;
+        public DateTime CreateDate { get; set; } = DateTime.Now!;
     }
 
-    public class UpdateReportDTO : CreateReportDTO
+    public class UpdateReportDTO 
     {  
-        public long Id { get; set; }
+        public string Type { get; set; } = null!;
         public string Status { get; set; } = null!;        
         public string Priority { get; set; } = null!;
-        public DateTime ModifyDate { get; set; }  = DateTime.Now!;
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public DateTime ModifyDate { get; set; } = DateTime.Now!;
     }
 
     public class ReportDTO : CreateReportDTO
     {
         public long Id { get; set; }
-        public string Status { get; set; } = "New"!;  
-        public string Priority { get; set; } = "Unconfirmed"!;   
-        
-        public DateTime ModifyDate { get; set; }
+        public string Status { get; set; } = null!;
+        public string Priority { get; set;  } = null!;
+
+        public DateTime ModifyDate { get; } = DateTime.Now!;
                 
         // public UserDTO User { get; set; }
         public ProjectDTO Project { get; set; } = null!;

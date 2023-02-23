@@ -19,12 +19,12 @@ namespace DynamiBugPlannerBackend.Models
 
     public class UpdateProjectDTO : CreateProjectDTO 
     {
-        public long Id { get; set; }
-        public bool IsArchived { get; set; } = false!;
+        public bool? IsArchived { get; set; } = false!;
     }
 
     public class ProjectDTO : UpdateProjectDTO
     {
+        public long Id { get; set; }
         // public UserDTO User { get; set; } = null!;
         public virtual IList<ReportDTO>? Reports { get; set; }
         // public GithubRepositoryDTO Repository { get; set; }

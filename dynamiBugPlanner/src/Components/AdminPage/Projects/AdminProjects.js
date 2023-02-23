@@ -1,6 +1,6 @@
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
-import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
+import { BugPlannerApi } from "../../../API/apiClient/BugPlannerApi";
 import React, { useEffect, useState } from "react";
 
 const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });

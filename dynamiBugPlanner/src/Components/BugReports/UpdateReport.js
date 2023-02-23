@@ -1,12 +1,12 @@
 import "./AddReport.css";
 import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 export default function UpdateReport() {
   const [id] = useState(window.location.search.substring(1));
-  const [reportStorage] = useState(JSON.parse(window.sessionStorage.getItem("report")));
+  const [reportStorage] = useState(JSON.parse(window.sessionStorage.getItem("reportDetail")));
   const [reportType, setReportType] = useState(reportStorage.type);
   const [reportTitle, setReportTitle] = useState(reportStorage.title);
   const [reportDescription, setReportDescription] = useState(reportStorage.description);
@@ -14,15 +14,13 @@ export default function UpdateReport() {
   const [reportPriority, setReportPriority] = useState(reportStorage.priority);
 
   const putData = async () => {
-    let result = await api.updateReport(Number(id), { 
-      id: Number(reportStorage.id),
+    let result = await api.updateReport(Number(reportStorage.id), { 
       type: reportType, 
-      title: reportTitle, 
-      description: reportDescription, 
-      projectId: Number(reportStorage.projectId), 
       status: reportStatus, 
       priority: reportPriority,  
-      modifyDate: Date.now().toLocaleString
+      title: reportTitle, 
+      description: reportDescription, 
+      modifyDate: new Date().toISOString()
     });
     result
       .json()
@@ -35,7 +33,7 @@ export default function UpdateReport() {
     putData();
   };
 
-  if (id == reportStorage.id) {
+  if (id === reportStorage.id) {
     return (
       <div className="container">
         <h4>Update Report</h4>
@@ -159,6 +157,6 @@ export default function UpdateReport() {
     );
   }
   else {
-    window.location.href = `/Project?${reportStorage.id}`;
+    window.location.href = `/Report?${reportStorage.id}`;
   }
 }

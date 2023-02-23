@@ -118,7 +118,7 @@ namespace DynamiBugPlannerBackend.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateProject(long id, [FromBody] UpdateProjectDTO projectDTO)
         {
-            if (!ModelState.IsValid || id < 1 || id != projectDTO.Id)
+            if (!ModelState.IsValid || id < 1)
             {
                 return BadRequest(ModelState);
             }

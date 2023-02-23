@@ -1,9 +1,19 @@
 import "./ReportDetails.css";
 import "../Comments/GetComments.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
 
 const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
+
+function useSessionStorage(key, defaultValue = "") {
+  const [state, setState] = useState(() => {
+    return JSON.parse(sessionStorage.getItem(key)) || defaultValue;
+  });
+  useEffect(() => {
+    sessionStorage.setItem(key, JSON.stringify(state));
+  }, [key, state]);
+  return [state, setState];
+}
 
 export default function ReportDetails() {
   let reportDetailId = window.location.search;
@@ -30,18 +40,26 @@ function showAddComment() {
 }
 
 function DisplayReport({ id }) {
-  const [report, setReport] = useState();
+  const [reportDetail, setReportDetail] = useSessionStorage("reportDetail");
 
-  useState(() => {
+  useEffect(() => {
     const fetchData = async () => {
-    let result = await api.getReport(id);
+      let result = await api.getReport(id);
+      result
+        .json()
+        .then((json) => setReportDetail(json))
+        .catch((err) => console.log(err.message));
+    };
+    fetchData();
+  }, [id, setReportDetail]);
+
+  const deleteReport = async () => {
+    let result = await api.deleteReport(id);
     result
       .json()
-      .then((json) => setReport(json))
+      .then(window.location.href = "/Browse")
       .catch((err) => console.log(err.message));
-  };
-  fetchData();
-}, []);
+  }
 
   const showComments = (comments) => {
     if (typeof comments !== "undefined") {
@@ -74,24 +92,23 @@ function DisplayReport({ id }) {
     }
   };
 
-  if (typeof report !== "undefined" && report !== null) {
-    sessionStorage.setItem("report", JSON.stringify(report));
+  if (reportDetail !== "") {
     return (
       <div className="container RDcontainer">
-        <a href={`/EditReport?${report.id}`}>Edit Report</a>
+        <a href={`/EditReport?${reportDetail.id}`}>Edit Report</a>
         <div className="row RDrow">
           <label className="RDlabel col-15">Id: </label>{" "}
           <input
             className="RDinput col-25"
             type="number"
-            value={report.id}
+            value={reportDetail.id}
             readOnly
           />
           <label className="RDlabel col-15">Type: </label>{" "}
           <input
             className="RDinput col-25"
             type="text"
-            value={report.type}
+            value={reportDetail.type}
             readOnly
           />
         </div>
@@ -100,14 +117,14 @@ function DisplayReport({ id }) {
           <input
             className="RDinput col-25"
             type="text"
-            value={report.status}
+            value={reportDetail.status}
             readOnly
           />
           <label className="RDlabel col-15">Priority: </label>{" "}
           <input
             className="RDinput col-25"
             type="text"
-            value={report.priority}
+            value={reportDetail.priority}
             readOnly
           />
         </div>
@@ -116,7 +133,7 @@ function DisplayReport({ id }) {
           <input
             className="RDinput col-75"
             type="text"
-            value={report.title}
+            value={reportDetail.title}
             readOnly
           />
         </div>
@@ -126,7 +143,7 @@ function DisplayReport({ id }) {
             rows="10"
             cols="70"
             className="RDinput col-75"
-            value={report.description}
+            value={reportDetail.description}
             readOnly
           />
         </div>
@@ -135,7 +152,7 @@ function DisplayReport({ id }) {
           <input
             className="RDinput col-35"
             type="text"
-            value={new Date(report.createDate)}
+            value={new Date(reportDetail.createDate)}
             readOnly
           />
         </div>
@@ -144,19 +161,19 @@ function DisplayReport({ id }) {
           <input
             className="RDinput col-35"
             type="text"
-            value={new Date(report.modifyDate)}
+            value={new Date(reportDetail.modifyDate)}
             readOnly
           />
         </div>
         <a
-          href={`/Project?${report.project.id}`}
+          href={`/Project?${reportDetail.project.id}`}
           className="btn btn-primary RDbutton"
         >
           Goto Project
         </a>
-        {report.plan !== null ? (
+        {reportDetail.plan !== null ? (
           <a
-            href={`/Plan?${report.plan.id}`}
+            href={`/Plan?${reportDetail.plan.id}`}
             className="btn btn-primary RDbutton"
           >
             Goto Plan
@@ -164,18 +181,17 @@ function DisplayReport({ id }) {
         ) : (
           <></>
         )}
-        <a
-          href={`/DeleteProject?${report.id}`}
-          className="btn btn-primary RDbutton"
-         > Delete Report
-        </a>
+        <button
+                    onClick={deleteReport}
+                    className="btn btn-primary RDbutton"
+                >Delete Report</button>
         <input
           type="button"
           className="btn btn-primary RDbutton"
           onClick={showAddComment}
           value="Add Comment"
         />
-        <div style={{ marginTop: "1rem" }}>{showComments(report.comments)}</div>
+        <div style={{ marginTop: "1rem" }}>{showComments(reportDetail.comments)}</div>
       </div>
     );
   }

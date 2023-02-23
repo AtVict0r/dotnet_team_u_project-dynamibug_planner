@@ -1,16 +1,18 @@
-import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
-import React, { useEffect, useState } from "react";
+import { BugPlannerApi } from "../../../API/apiClient/BugPlannerApi";
+import React, { useState } from "react";
 
 const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 export default function AddProject() {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+  const [projectGithubId] = useState(0);
 
   const postData = async () => {
     let result = await api.createProject({
       name: projectName,
       description: projectDescription,
+      githubId: projectGithubId,
     });
     result
       .json()
@@ -55,7 +57,6 @@ export default function AddProject() {
             onChange={(event) => {
               setProjectDescription(event.target.value);
             }}
-            required
           ></textarea>
         </div>
         <div className="row">

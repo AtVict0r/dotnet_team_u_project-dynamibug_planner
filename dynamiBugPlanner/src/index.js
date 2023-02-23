@@ -11,9 +11,10 @@ import AddReport from "./Components/BugReports/AddReport";
 import Browse from "./Components/BugReports/Browse";
 import Report from "./Components/BugReports/ReportDetails";
 import UpdateReport from "./Components/BugReports/UpdateReport";
-import AddProject from "./Components/AdminPage/AddProject";
-import Projects from "./Components/AdminPage/AdminProjects";
-import Project from "./Components/AdminPage/ProjectDetail";
+import AddProject from "./Components/AdminPage/Projects/AddProject";
+import Projects from "./Components/AdminPage/Projects/AdminProjects";
+import Project from "./Components/AdminPage/Projects/ProjectDetail";
+import UpdateProject from "./Components/AdminPage/Projects/UpdateProject";
 import Plan from "./Components/AdminPage/PlanFix";
 import Contact from "./Components/ContactForm";
 import NoPage from "./Components/NoPage";
@@ -37,6 +38,7 @@ export default function Page() {
           <Route path="/NewProject" element={<AddProject />} />
           <Route path="/Projects" element={<Projects />} />
           <Route path="/Project" element={<Project />} />
+          <Route path="/EditProject" element={<UpdateProject />} />
           <Route path="/Plan" element={<Plan />} />
           <Route path="/Email" element={<Contact />} />
           <Route path="*" element={<NoPage />} />

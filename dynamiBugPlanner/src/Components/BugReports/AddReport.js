@@ -34,10 +34,11 @@ export default function AddReport() {
 
    const postData = async () => {
     let result = await api.createReport({
-      projectId: Number(projectId),
       type: reportType,
       title: reportTitle,
       description: reportDescription,
+      projectId: Number(projectId),
+      createDate: new Date().toISOString()
     });
     result
       .json()
