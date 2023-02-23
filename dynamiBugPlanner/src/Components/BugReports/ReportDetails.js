@@ -35,12 +35,23 @@ export default function ReportDetails() {
   }
 }
 
-function showAddComment() {
-  console.log("Show add comment");
-}
-
 function DisplayReport({ id }) {
   const [reportDetail, setReportDetail] = useSessionStorage("reportDetail");
+  const [newComment, setNewComment] = useState("");
+  const [addComment, setAddComment] = useState(true);
+  const toggleAddComment = () => setAddComment(!addComment);
+
+  const postComment = async () => {
+    let result = await api.createComment({
+      comment: newComment,
+      bugId: reportDetail.id,
+      createDate: new Date().toISOString(),
+    });
+    result
+      .json()
+      .then(window.location.reload())
+      .catch((err) => console.log(err.message));
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,11 +72,19 @@ function DisplayReport({ id }) {
       .catch((err) => console.log(err.message));
   }
 
+  const deleteComment = async (commentId) => {
+    let result = await api.deleteComment(commentId);
+    result
+      .json()
+      .then(window.location.reload())
+      .catch((err) => console.log(err.message));
+  }
+
   const showComments = (comments) => {
     if (typeof comments !== "undefined") {
       return comments.map((c) => {
         return (
-          <div key={c.id}>
+          <div key={c.id} >
             <div className="row Crow">
               <label className="Clabel">Date: </label>{" "}
               <input
@@ -84,6 +103,13 @@ function DisplayReport({ id }) {
                 readOnly
               />
             </div>
+            <button
+            style={{marginBottom: "1rem"}}
+              onClick={(event) => {
+                deleteComment(c.id)
+              }}
+              className="btn btn-primary"
+            >Delete Comment</button>
           </div>
         );
       });
@@ -182,16 +208,38 @@ function DisplayReport({ id }) {
           <></>
         )}
         <button
-                    onClick={deleteReport}
-                    className="btn btn-primary RDbutton"
-                >Delete Report</button>
+          onClick={deleteReport}
+          className="btn btn-primary RDbutton"
+        >Delete Report</button>
         <input
           type="button"
           className="btn btn-primary RDbutton"
-          onClick={showAddComment}
+          onClick={toggleAddComment}
           value="Add Comment"
         />
-        <div style={{ marginTop: "1rem" }}>{showComments(reportDetail.comments)}</div>
+        <div style={{ marginTop: "1rem", display: (addComment ? "none" : "block"), }}>
+          <form>
+            <div className="row Crow">
+              <label className="Clabel">New Comment: </label>{" "}
+              <textarea
+                className="Ctextarea"
+                rows="5"
+                id="newComment"
+                value={newComment}
+                onChange={(event) => {
+                  setNewComment(event.target.value);
+                }}
+              />
+            </div>
+            <input
+              type="button"
+              className="btn btn-primary RDbutton"
+              onClick={postComment}
+              value="Post Comment"
+            />
+          </form>
+        </div>
+        <div style={{ marginTop: "1rem", }}>{showComments(reportDetail.comments)}</div>
       </div>
     );
   }

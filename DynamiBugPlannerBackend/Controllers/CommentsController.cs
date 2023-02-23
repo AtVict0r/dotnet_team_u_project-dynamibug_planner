@@ -25,6 +25,24 @@ namespace DynamiBugPlannerBackend.Controllers
             _mapper = mapper;
         }
 
+        // GET: api/Comments
+        [HttpGet(Name = "GetComments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetComments()
+        {
+            try
+            {
+                var comments = await _unitOfWork.Comments.GetAll();
+                var results = _mapper.Map<IList<CommentDTO>>(comments);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
         // POST: api/Comments
         // [Authorize]
         [HttpPost(Name = "CreateComment")]

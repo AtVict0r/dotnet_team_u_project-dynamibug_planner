@@ -10,14 +10,14 @@ namespace DynamiBugPlannerBackend.Models
         [Required]
         [DataType(DataType.MultilineText)]
         public string Comment { get; set; } = null!;
+        public DateTime CreateDate { get; set; } = DateTime.Now!;
         // public string UserId { get; set; } = null!;
         public long BugId { get; set; }
     }
 
     public class CommentDTO : CreateCommentDTO
     {
-        public long Id { get; }
-        public DateTime CreateDate { get; set; } = DateTime.Now!;
+        public long Id { get; set; }
         // public UserModel User { get; set; } = null!;
         public ReportDTO Bug { get; } = null!;
     }
