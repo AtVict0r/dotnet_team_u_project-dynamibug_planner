@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { BugPlannerApi } from "../../../API/apiClient/BugPlannerApi";
 import Table from "react-bootstrap/Table";
-
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 function useSessionStorage(key, defaultValue = "") {
   const [state, setState] = useState(() => {
     return JSON.parse(sessionStorage.getItem(key)) || defaultValue;
   });
-  useEffect(() => {
+  useState(() => {
     sessionStorage.setItem(key, JSON.stringify(state));
   }, [key, state]);
   return [state, setState];
 }
 
-export default function ProjectDetail() {
+export default function ProjectDetail({ api }) {
   let projectDetailId = window.location.search;
   if (projectDetailId === null || projectDetailId === "") {
     window.location.href = "/Projects";
@@ -29,26 +26,59 @@ export default function ProjectDetail() {
           <a href="/Projects">Go to Projects</a>
           <br />
           <a href="/Browse">Go to Reports</a>
-          <DisplayProject id={projectDetailId} />
+          <DisplayProject api={api} id={projectDetailId} />
         </div>
       );
     }
   }
 }
 
-function ShowReports() {
-    const [listOfReports, setListOfReports] = useState(JSON.parse(sessionStorage.getItem("projectDetail")));
-    if(listOfReports !== null && typeof listOfReports !== 'undefined'){
-        setListOfReports(listOfReports.reports);
-        if(typeof listOfReports !== 'undefined'){
-            console.log(listOfReports);
-        }
-    }
+function ShowReportsList({ reports }) {
+  if (typeof reports != "undefined" && reports.length > 0) {
+    return (
+      <Table>
+        <thead>
+          <tr>
+            <th>Report Title</th>
+            <th>Report Type</th>
+            <th>Report Status</th>
+            <th>Report Priority</th>
+            <th>Report Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            reports.map((report) => {
+              return (
+                <tr key={report.id}>
+                  <td>
+                    <a href={`/Report?${report.id}`}>{report.title}</a>
+                  </td>
+                  <td>{report.type}</td>
+                  <td>{report.status}</td>
+                  <td>{report.priority}</td>
+                  <td>{new Date(report.modifyDate).toLocaleString()}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </Table>
+    );
+  } else {
+    return <p>No information.</p>;
+  }
 }
 
-function DisplayProject({ id }) {
-  const [projectDetail, setProjectDetail] = useSessionStorage("projectDetail");
-  const [listReports, setListReports] = useState(projectDetail.report);
+function DisplayProject({ api, id }) {
+  const [projectDetail, setProjectDetail] = useSessionStorage("projectDetail", {
+    isArchived: false,
+    id: 0,
+    name: "",
+    description: "",
+    githubId: null,
+    reports: [],
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,7 +89,7 @@ function DisplayProject({ id }) {
         .catch((err) => console.log(err.message));
     };
     fetchData();
-  }, [id, setProjectDetail]);
+  }, [api, id, setProjectDetail]);
 
   const deleteProject = async () => {
     let result = await api.deleteProject(id);
@@ -76,45 +106,6 @@ function DisplayProject({ id }) {
       return <p>No information.</p>;
     }
   };
-
-//   if (typeof projectDetail.reports !== "undefined") {
-//     setListReports(
-//       projectDetail.reports.map((report) => {
-//         return (
-//           <tr key={report.id}>
-//             <td>
-//               <a href={`/Report?${report.id}`}>{report.title}</a>
-//             </td>
-//             <td>{report.type}</td>
-//             <td>{report.status}</td>
-//             <td>{report.priority}</td>
-//             <td>{new Date(report.modifyDate).toLocaleString()}</td>
-//           </tr>
-//         );
-//       })
-//     );
-
-//     showReports = () => {
-//       if (projectDetail.reports.length > 0) {
-//         return (
-//           <Table>
-//             <thead>
-//               <tr>
-//                 <th>Report Title</th>
-//                 <th>Report Type</th>
-//                 <th>Report Status</th>
-//                 <th>Report Priority</th>
-//                 <th>Report Date</th>
-//               </tr>
-//             </thead>
-//             <tbody>{listReports}</tbody>
-//           </Table>
-//         );
-//       } else {
-//         return <p>No information.</p>;
-//       }
-//     };
-//   }
 
   return (
     <div className="container">
@@ -169,7 +160,7 @@ function DisplayProject({ id }) {
             className="RDinput col-75"
             value={
               projectDetail.description != null ||
-              projectDetail.description !== ""
+                projectDetail.description !== ""
                 ? projectDetail.description
                 : "No Description"
             }
@@ -183,7 +174,7 @@ function DisplayProject({ id }) {
       </div>
       <div className="row">
         <h6>Reports</h6>
-        <ShowReports />
+        <ShowReportsList reports={projectDetail.reports} />
       </div>
     </div>
   );

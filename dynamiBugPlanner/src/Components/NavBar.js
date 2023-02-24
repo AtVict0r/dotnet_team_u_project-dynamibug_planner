@@ -28,31 +28,24 @@ function BrandLogo() {
  * If the user is not signed in, display the login and register links, otherwise display the user's name
  * and logout links.
  */
-function UserLogin() {
-  const User = {
-    IsSignedIn: true,
-    Name: "John Doe",
-  };
-
-  let content;
-
-  if (User.IsSignedIn) {
-    content = (
-      <Nav className="ms-auto">
-        <Nav.Link href="#home">Login</Nav.Link>
-        <Nav.Link href="#features">Register</Nav.Link>
+function UserLogin({user}) {
+  if (user.isSignedIn) {
+    return (
+      <Nav className="me-auto">
+        <Nav.Link href="/Profile">{user.username}</Nav.Link>
+        <Nav.Link href="/Logout">Logout</Nav.Link>
       </Nav>
     );
+    
   } else {
-    content = (
-      <Nav className="me-auto">
-        <Nav.Link href="#home">{User.Name}</Nav.Link>
-        <Nav.Link href="#features">Logout</Nav.Link>
+    return (
+      <Nav className="ms-auto">
+        <Nav.Link href="/Login">Login</Nav.Link>
+        <Nav.Link href="/Register">Register</Nav.Link>
       </Nav>
     );
   }
-
-  return content;
+  
   // To=Do: Add Profile Image
 }
 
@@ -61,7 +54,7 @@ function UserLogin() {
  * BrandLogo component, a Navbar.Toggle component, and a Navbar.Collapse component inside of it. The
  * Navbar.Collapse component has a SearchComponent component and a UserLogin component inside of it.
  */
-export default function NavBar() {
+export default function NavBar({user}) {
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -69,8 +62,8 @@ export default function NavBar() {
           <BrandLogo />
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {useLocation().pathname == "/" ? <></> : <SearchBar />}
-            <UserLogin />
+            <SearchBar showSearchBar={(useLocation().pathname == "/")}/>
+            <UserLogin user={user}/>
           </Navbar.Collapse>
         </Container>
       </Navbar>

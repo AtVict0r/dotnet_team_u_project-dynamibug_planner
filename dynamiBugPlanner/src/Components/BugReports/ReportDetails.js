@@ -36,7 +36,19 @@ export default function ReportDetails() {
 }
 
 function DisplayReport({ id }) {
-  const [reportDetail, setReportDetail] = useSessionStorage("reportDetail");
+  const [reportDetail, setReportDetail] = useSessionStorage("reportDetail", {
+    id: 0,
+    type: "",
+    status: "",
+    priority: "",
+    title: "",
+    description: "",
+    createDate: "",
+    modifiedDate: "",
+    project: {id: 0},
+    plan: {id: 0},
+    comments: []
+  });
   const [newComment, setNewComment] = useState("");
   const [addComment, setAddComment] = useState(true);
   const toggleAddComment = () => setAddComment(!addComment);

@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import React from "react";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BugPlannerApi } from "./API/apiClient/BugPlannerApi";
 import NavBar from "./Components/NavBar";
 import SideBar from "./Components/AdminPage/SideBar";
 import Home from "./Components/Home";
@@ -22,14 +23,18 @@ import Footer from "./Components/Footer";
 
 let user = {
   role: "admin",
+  username: "Admin",
+  isSignedIn: true,
+  name: "John Doe",
 };
+const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 export default function Page() {
   return (
     <BrowserRouter>
       {user.role === "admin" ? <SideBar /> : <></>}
       <Routes>
-        <Route path="/" element={<NavBar />}>
+        <Route path="/" element={<NavBar user={user} />}>
           <Route index element={<Home />} />
           <Route path="/NewReport" element={<AddReport />} />
           <Route path="/Browse" element={<Browse />} />
@@ -37,7 +42,7 @@ export default function Page() {
           <Route path="/EditReport" element={<UpdateReport />} />
           <Route path="/NewProject" element={<AddProject />} />
           <Route path="/Projects" element={<Projects />} />
-          <Route path="/Project" element={<Project />} />
+          <Route path="/Project" element={<Project api={api} />} />
           <Route path="/EditProject" element={<UpdateProject />} />
           <Route path="/Plan" element={<Plan />} />
           <Route path="/Email" element={<Contact />} />

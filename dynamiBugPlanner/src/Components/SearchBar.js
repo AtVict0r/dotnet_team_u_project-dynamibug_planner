@@ -15,7 +15,7 @@ function useSessionStorage(key, defaultValue = "") {
 /**
  * It returns a Stack component with a Form.Control and a Button component inside of it.
  */
-export default function SearchBar() {
+export default function SearchBar({showSearchBar}) {
   const [navSearchBar, setNavSearchBar] = useSessionStorage("navSearchBar");
 
   return (
@@ -23,7 +23,7 @@ export default function SearchBar() {
       className="mx-auto"
       direction="horizontal"
       gap={3}
-      style={{ width: "80%" }}
+      style={{ width: "80%", visibility: (showSearchBar)? "hidden" : "visible"}}
     >
       <FormControl
       id = "navSearchBar"
