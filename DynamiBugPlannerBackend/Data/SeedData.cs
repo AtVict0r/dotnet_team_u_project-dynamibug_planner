@@ -20,15 +20,57 @@ public static class SeedData
                 return;   // DB already has data
             }
 
+            SeedUsers(context);
+
             SeedProjects(context);
 
             SeedReports(context);
         }
     }
 
+    private static void SeedUsers(DatabaseContext context, int size = 5)
+    {
+        List<UserModel> myUsers = new List<UserModel>();
+        string[] roles = { "user", "manager", "admin" };
+        string[] names = { "Markus", "Nia", "Natalia", "Joyce", "Gianna", "Lucy", "Landon", "Tony", "Sienna", "Elijah", "Krista", "Jaelyn", "Chandler", "Rosario", "Sherman", "Barry", "Mcknight", "Cohen", "Sanders", "Leon", "Willis", "Griffith", "Li", "Wyatt" };
+
+        myUsers.Add(
+                 new UserModel
+                 {
+                     Role = "admin",
+                     UserName = "Admin",
+                     Email = "admin@example.com",
+                     FirstName = "John",
+                     LastName = "Doe",
+                 }
+            );
+
+        for (int i = 1; i <= size; i++)
+        {
+            string firstName = names[Random.Shared.Next(names.Length)];
+            string lastName = names[Random.Shared.Next(names.Length)];
+            string userName = lastName[0] + firstName + i;
+
+            myUsers.Add(
+                 new UserModel
+                 {
+                     Role = roles[Random.Shared.Next(roles.Length)],
+                     FirstName = firstName,
+                     LastName = lastName,                     
+                     UserName = userName,                     
+                     Email = $"{userName}@example.com",
+                 }
+            );
+        }
+
+        context.AddRange(myUsers);
+        context.SaveChanges();
+    }
+
     private static void SeedProjects(DatabaseContext context, int size = 5)
     {
         List<ProjectModel> myProjects = new List<ProjectModel>();
+        List<UserModel> admins = context.Users.ToList().FindAll(u => !u.Role.Contains("user"));
 
         for (int i = 1; i <= size; i++)
         {
@@ -36,7 +78,8 @@ public static class SeedData
                  new ProjectModel
                  {
                      Name = $"Test Project {i}",
-                     Description = $"This is test project {i}"
+                     Description = $"This is test project {i}",
+                     UserId = admins[Random.Shared.Next(admins.Count())].Id
                  }
             );
         }
@@ -50,6 +93,7 @@ public static class SeedData
         List<ReportModel> myReports = new List<ReportModel>();
         List<BugFixModel> myFixes = new List<BugFixModel>();
         List<CommentModel> myComments = new List<CommentModel>();
+        List<UserModel> users = context.Users.ToList();
         string[] types = { "Bug", "Documentation", "Enhancement", "Help", "Question", "Other" };
         string[] statuses = { "New", "Open", "Active", "Resolved", "Wont Fix", "Archived" };
         string[] priorities = { "Unconfirmed", "Low", "Medium", "High", "Immediate" };
@@ -66,12 +110,13 @@ public static class SeedData
                         Priority = priorities[Random.Shared.Next(priorities.Length)],
                         Title = $"Test Project {j} Bug Report {i}",
                         Description = $"This is test report {i} for test project {j}",
-                        ProjectId = j
+                        ProjectId = j,
+                        UserId = users[Random.Shared.Next(users.Count())].Id,
                     }
                 );
 
                 int count = myReports.Count();
-                
+
                 myFixes.Add(
                     new BugFixModel
                     {
@@ -84,7 +129,8 @@ public static class SeedData
                      new CommentModel
                      {
                          Comment = $"This is a comment for bug report {count}",
-                         ReportId = count
+                         ReportId = count,
+                         UserId = users[Random.Shared.Next(users.Count())].Id,
                      }
                 );
             }

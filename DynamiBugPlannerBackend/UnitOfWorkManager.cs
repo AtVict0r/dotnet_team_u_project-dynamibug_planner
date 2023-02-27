@@ -10,6 +10,7 @@ namespace DynamiBugPlannerBackend
         private IGenericRepository<ReportModel> _reports = null!;
         private IGenericRepository<BugFixModel> _plans = null!;
         private IGenericRepository<CommentModel> _comments = null!;
+        private IGenericRepository<UserModel> _users = null!;
         
 
         public UnitOfWorkManager(DatabaseContext context = null!)
@@ -24,6 +25,8 @@ namespace DynamiBugPlannerBackend
         public IGenericRepository<BugFixModel> Plans => _plans ?? new GenericRepository<BugFixModel>(_context);
 
         public IGenericRepository<CommentModel> Comments => _comments ?? new GenericRepository<CommentModel>(_context);
+
+        public IGenericRepository<UserModel> Users => _users ?? new GenericRepository<UserModel>(_context);
 
         public async Task Save()
         {

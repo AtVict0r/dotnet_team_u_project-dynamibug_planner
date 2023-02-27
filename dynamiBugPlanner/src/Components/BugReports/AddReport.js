@@ -2,7 +2,7 @@ import "./AddReport.css";
 import React, { useEffect, useState } from "react";
 import Captcha from "../CustomCaptcha";
 
-export default function AddReport({ api }) {
+export default function AddReport({ api, user }) {
   const [listProject, setListProject] = useState([]);
   const [projectId, setProjectId] = useState("");
   const [reportType, setReportType] = useState("Bug");
@@ -32,6 +32,7 @@ export default function AddReport({ api }) {
 
   const postData = async () => {
     let result = await api.createReport({
+      userId: Number(user.id),
       type: reportType,
       title: reportTitle,
       description: reportDescription,

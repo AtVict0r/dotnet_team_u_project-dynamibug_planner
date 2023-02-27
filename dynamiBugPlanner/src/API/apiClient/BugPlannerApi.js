@@ -15,18 +15,16 @@ export class BugPlannerApi extends HttpClient {
    * No description
    *
    * @tags Comments
-   * @name CreateComment
-   * @request POST:/api/Comments
+   * @name GetComment
+   * @request GET:/api/Comments/{id}
    * @response `200` `void` Success
-   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
    * @response `500` `void` Server Error
    */
-  createComment = (data, params = {}) =>
+  getComment = (id, params = {}) =>
     this.request({
-      path: `/api/Comments`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
+      path: `/api/Comments/${id}`,
+      method: "GET",
       ...params,
     });
   /**
@@ -49,31 +47,16 @@ export class BugPlannerApi extends HttpClient {
   /**
    * No description
    *
-   * @tags Plans
-   * @name GetPlans
-   * @request GET:/api/Plans
+   * @tags Comments
+   * @name CreateComment
+   * @request POST:/api/Comments
    * @response `200` `void` Success
-   * @response `500` `void` Server Error
-   */
-  getPlans = (params = {}) =>
-    this.request({
-      path: `/api/Plans`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Plans
-   * @name CreatePlan
-   * @request POST:/api/Plans
-   * @response `201` `void` Success
    * @response `400` `ProblemDetails` Bad Request
    * @response `500` `void` Server Error
    */
-  createPlan = (data, params = {}) =>
+  createComment = (data, params = {}) =>
     this.request({
-      path: `/api/Plans`,
+      path: `/api/Comments`,
       method: "POST",
       body: data,
       type: ContentType.Json,

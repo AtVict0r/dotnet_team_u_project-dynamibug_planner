@@ -5,39 +5,29 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Comments": {
-      "post": {
+    "/api/Comments/{id}": {
+      "get": {
         "tags": [
           "Comments"
         ],
-        "operationId": "CreateComment",
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCommentDTO"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCommentDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCommentDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCommentDTO"
-              }
+        "operationId": "GetComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           }
-        },
+        ],
         "responses": {
-          "400": {
-            "description": "Bad Request",
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
@@ -56,16 +46,11 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
           "500": {
             "description": "Server Error"
           }
         }
-      }
-    },
-    "/api/Comments/{id}": {
+      },
       "delete": {
         "tags": [
           "Comments"
@@ -132,46 +117,32 @@
         }
       }
     },
-    "/api/Plans": {
-      "get": {
-        "tags": [
-          "Plans"
-        ],
-        "operationId": "GetPlans",
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        }
-      },
+    "/api/Comments": {
       "post": {
         "tags": [
-          "Plans"
+          "Comments"
         ],
-        "operationId": "CreatePlan",
+        "operationId": "CreateComment",
         "requestBody": {
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateBugFixDTO"
+                "$ref": "#/components/schemas/CreateCommentDTO"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateBugFixDTO"
+                "$ref": "#/components/schemas/CreateCommentDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateBugFixDTO"
+                "$ref": "#/components/schemas/CreateCommentDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateBugFixDTO"
+                "$ref": "#/components/schemas/CreateCommentDTO"
               }
             }
           }
@@ -197,7 +168,7 @@
               }
             }
           },
-          "201": {
+          "200": {
             "description": "Success"
           },
           "500": {
@@ -987,24 +958,6 @@
   },
   "components": {
     "schemas": {
-      "CreateBugFixDTO": {
-        "type": "object",
-        "properties": {
-          "html": {
-            "type": "string",
-            "nullable": true
-          },
-          "bugId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "additionalProperties": false
-      },
       "CreateCommentDTO": {
         "required": [
           "comment"
@@ -1015,7 +968,15 @@
             "type": "string",
             "format": "multiline"
           },
-          "bugId": {
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reportId": {
             "type": "integer",
             "format": "int64"
           }
@@ -1035,6 +996,10 @@
             "type": "string",
             "nullable": true
           },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
           "githubId": {
             "type": "integer",
             "format": "int64",
@@ -1051,6 +1016,10 @@
         ],
         "type": "object",
         "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
           "type": {
             "type": "string"
           },
@@ -1060,17 +1029,13 @@
           "description": {
             "type": "string"
           },
-          "createDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "modifyDate": {
-            "type": "string",
-            "format": "date-time"
-          },
           "projectId": {
             "type": "integer",
             "format": "int64"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -1108,68 +1073,48 @@
           "html": {
             "type": "string",
             "nullable": true
-          },
-          "bugId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userId": {
-            "type": "integer",
-            "format": "int64"
           }
         },
         "additionalProperties": false
       },
       "UpdateProjectDTO": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "description": {
             "type": "string",
             "nullable": true
           },
-          "githubId": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true
-          },
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
           "isArchived": {
-            "type": "boolean"
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
       "UpdateReportDTO": {
-        "required": [
-          "description",
-          "title",
-          "type"
-        ],
         "type": "object",
         "properties": {
           "type": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "status": {
             "type": "string",
             "nullable": true
           },
           "priority": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
             "type": "string",
             "nullable": true
           },

@@ -6,13 +6,11 @@ export default function AddProject({api}) {
   const [projectStorage] = useState(JSON.parse(window.sessionStorage.getItem("projectDetail")));
   const [projectName, setProjectName] = useState(projectStorage.name);
   const [projectDescription, setProjectDescription] = useState(projectStorage.description);
-  const [projectGithubId] = useState(projectStorage.githubId);
 
   const putData = async () => {
     let result = await api.updateProject(Number(projectStorage.id), {
       name: projectName,
       description: projectDescription,
-      githubId: projectGithubId,
     });
     result
       .json()

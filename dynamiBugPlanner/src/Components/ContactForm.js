@@ -5,11 +5,11 @@ import Captcha from "./CustomCaptcha";
 export default function ContactForm({user}) {
     sessionStorage.removeItem('navSearchBar');
     // lazy useState initializer
-    const [senderName, setSenderName] = useLocalStorage("senderName", user.name);
-    const [senderEmail, setSenderEmail] = useLocalStorage("senderEmail", user.email);
-    const [receiverEmail, setReceiverEmail] = useLocalStorage("receiverEmail");
-    const [messageTitle, setMessageTitle] = useLocalStorage("messageTitle");
-    const [messageBody, setMessageBody] = useLocalStorage("messageBody");
+    const [senderName, setSenderName] = useState(user.name);
+    const [senderEmail, setSenderEmail] = useState(user.email);
+    const [receiverEmail, setReceiverEmail] = useState("");
+    const [messageTitle, setMessageTitle] = useState("");
+    const [messageBody, setMessageBody] = useState("");
 
     const handleChange = (tagId) => {
         const list = document.getElementById(tagId).classList;
@@ -59,7 +59,7 @@ export default function ContactForm({user}) {
             </div>
             <div className="row">
                 <label className="CFlabel" htmlFor="receiverEmail">
-                    Reciever Username:{" "}
+                    Recipient:{" "}
                 </label>
                 <input
                     id="receiverEmail"

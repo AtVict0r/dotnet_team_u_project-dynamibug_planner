@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import Captcha from "../../CustomCaptcha";
 
-export default function AddProject(api) {
+export default function AddProject({api, user}) {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
 
   const postData = async () => {
     let result = await api.createProject({
+      userId: user.id,
       name: projectName,
       description: projectDescription,
       githubId: 0,

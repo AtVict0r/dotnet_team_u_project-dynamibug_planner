@@ -33,7 +33,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var reports = await _unitOfWork.Reports.GetAll(includes: new List<string> { "Project", "Plan", "Comments" });
+                var reports = await _unitOfWork.Reports.GetAll(includes: new List<string> { "Project", "Plan", "Comments", "User" });
                 var results = _mapper.Map<IList<ReportDTO>>(reports);
                 return Ok(results);
             }
@@ -52,7 +52,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var report = await _unitOfWork.Reports.Get(q => q.Id == id, new List<string> { "Project", "Plan", "Comments" });
+                var report = await _unitOfWork.Reports.Get(q => q.Id == id, new List<string> { "Project", "Plan", "Comments", "User" });
 
                 if (report != null)
                 {

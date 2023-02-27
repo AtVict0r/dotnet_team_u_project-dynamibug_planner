@@ -2,6 +2,7 @@ import "./ReportDetails.css";
 import "../Comments/GetComments.css";
 import React, { useEffect, useState } from "react";
 import Captcha from "../CustomCaptcha";
+import GetComments from "../Comments/GetComments";
 
 function useSessionStorage(key, defaultValue = "") {
   const [state, setState] = useState(() => {
@@ -34,7 +35,7 @@ export default function ReportDetails({api}) {
   }
 }
 
-function DisplayReport({ id, api }) {
+function DisplayReport({ id, api, user }) {
   const [reportDetail, setReportDetail] = useSessionStorage("reportDetail", {
     id: 0,
     type: "",
@@ -44,6 +45,7 @@ function DisplayReport({ id, api }) {
     description: "",
     createDate: "",
     modifiedDate: "",
+    user: {userName: ""},
     project: {id: 0},
     plan: {id: 0},
     comments: []
@@ -57,6 +59,7 @@ function DisplayReport({ id, api }) {
 
   const postComment = async () => {
     let result = await api.createComment({
+      userId: user.id,
       comment: newComment,
       bugId: reportDetail.id,
       createDate: new Date().toISOString(),
@@ -86,14 +89,6 @@ function DisplayReport({ id, api }) {
       .catch((err) => console.log(err.message));
   }
 
-  const deleteComment = async (commentId) => {
-    let result = await api.deleteComment(commentId);
-    result
-      .json()
-      .then(window.location.reload())
-      .catch((err) => console.log(err.message));
-  }
-
   const handleChange = (tagId) => {
     const list = document.getElementById(tagId).classList;
     if (list.contains("inputWarning")) { list.remove("inputWarning") }
@@ -102,44 +97,6 @@ function DisplayReport({ id, api }) {
   const handleInvalid = (tagId) => {
     const list = document.getElementById(tagId).classList;
     list.add("inputWarning");
-  };
-
-  const showComments = (comments) => {
-    if (typeof comments !== "undefined") {
-      return comments.map((c) => {
-        return (
-          <div key={c.id} >
-            <div className="row Crow">
-              <label className="Clabel">Date: </label>{" "}
-              <input
-                className="Cdate"
-                type="text"
-                value={new Date(c.createDate)}
-                readOnly
-              />
-            </div>
-            <div className="row Crow">
-              <label className="Clabel">Comment: </label>{" "}
-              <textarea
-                className="Ctextarea"
-                rows="5"
-                value={c.comment}
-                readOnly
-              />
-            </div>
-            <button
-            style={{marginBottom: "1rem"}}
-              onClick={(event) => {
-                deleteComment(c.id)
-              }}
-              className="btn btn-primary"
-            >Delete Comment</button>
-          </div>
-        );
-      });
-    } else {
-      return <p>No Comments</p>;
-    }
   };
 
   if (reportDetail !== "") {
@@ -194,6 +151,15 @@ function DisplayReport({ id, api }) {
             cols="70"
             className="RDinput col-75"
             value={reportDetail.description}
+            readOnly
+          />
+        </div>
+        <div className="row">
+          <label className="RDlabel col-15">Username: </label>{" "}
+          <input
+            className="RDinput col-35"
+            type="text"
+            value={reportDetail.user.userName}
             readOnly
           />
         </div>
@@ -262,7 +228,9 @@ function DisplayReport({ id, api }) {
             />
           </form>
         </div>
-        <div style={{ marginTop: "1rem", }}>{showComments(reportDetail.comments)}</div>
+        <div style={{ marginTop: "1rem", }}>
+          <GetComments api={api} comments={reportDetail.comments} />
+          </div>
       </div>
     );
   }

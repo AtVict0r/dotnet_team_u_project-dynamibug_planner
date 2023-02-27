@@ -24,25 +24,7 @@ namespace DynamiBugPlannerBackend.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
-        // GET: api/Plans
-        [HttpGet(Name = "GetPlans")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPlans()
-        {
-            try
-            {
-                var plans = await _unitOfWork.Plans.GetAll(includes: new List<string> { "Report" });
-                var results = _mapper.Map<IList<BugFixDTO>>(plans);
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
-            }
-        }
-
+        
         // GET: api/Plans/5
         [HttpGet("{id:long}", Name = "GetPlan")]
         [ProducesResponseType(StatusCodes.Status200OK)]

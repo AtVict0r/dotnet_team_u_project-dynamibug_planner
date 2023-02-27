@@ -4,7 +4,7 @@ namespace DynamiBugPlannerBackend.Models
 {
     public class CreateReportDTO
     {        
-        // public string UserId { get; set; } = null!;
+        public long UserId { get; set; }
         [Required]
         public string Type { get; set; } = null!;
         [Required]
@@ -33,7 +33,7 @@ namespace DynamiBugPlannerBackend.Models
 
         public DateTime ModifyDate { get; } = DateTime.Now!;
                 
-        // public UserDTO User { get; set; }
+        public UserDTO User { get; set; } = null!;
         public ProjectDTO Project { get; set; } = null!;
 
         public BugFixDTO? Plan { get; set; }

@@ -20,6 +20,7 @@ namespace DynamiBugPlannerBackend.Configurations
             CreateMap<ReportModel, ReportDTO>().ReverseMap();
             CreateMap<ReportModel, UpdateReportDTO>().ReverseMap();
             CreateMap<ReportModel, CreateReportDTO>().ReverseMap();
+            CreateMap<UserModel, UserDTO>().ReverseMap();
         }
     }
 }

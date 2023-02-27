@@ -11,9 +11,9 @@ namespace DynamiBugPlannerBackend.Data
         public string Comment { get; set; } = null!;
         public DateTime CreateDate { get; set; } = DateTime.Now!;
 
-        // [ForeignKey(nameof(User))]
-        // public string UserId { get; set; } = null!;
-        // public UserModel User { get; set; } = null!;
+        [ForeignKey(nameof(User))]
+        public long UserId { get; set; }
+        public UserModel User { get; set; } = null!;
 
         [ForeignKey(nameof(Report))]
         public long ReportId { get; set; }

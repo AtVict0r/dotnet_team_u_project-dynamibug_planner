@@ -22,9 +22,9 @@ namespace DynamiBugPlannerBackend.Data
 
         public DateTime? ModifyDate { get; set; } = DateTime.Now!;
 
-        // [ForeignKey(nameof(User))]
-        // public string UserName { get; set; } = null!;
-        // public UserModel User { get; set; } = null!;
+        [ForeignKey(nameof(User))]
+        public long UserId { get; set; }
+        public UserModel User { get; set; } = null!;
 
         [ForeignKey(nameof(Project))]
         public long ProjectId { get; set; }

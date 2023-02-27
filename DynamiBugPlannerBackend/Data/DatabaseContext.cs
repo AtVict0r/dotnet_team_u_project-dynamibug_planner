@@ -7,7 +7,7 @@ namespace DynamiBugPlannerBackend.Data
         public DatabaseContext(DbContextOptions<DatabaseContext> options) 
             : base(options) {}
 
-        // public DbSet<UserModel> Users { get; } = null!;
+        public DbSet<UserModel> Users { get; set; } = null!;
 
         public DbSet<ProjectModel> Projects { get; set; } = null!;
 

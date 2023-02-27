@@ -22,6 +22,7 @@ import NoPage from "./Components/NoPage";
 import Footer from "./Components/Footer";
 
 let user = {
+  id: 1,
   role: "admin",
   username: "Admin",
   email: "admin@example.com",
@@ -33,7 +34,7 @@ const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 export default function Page() {
   return (
     <BrowserRouter>
-      {user.role === "admin" ? <SideBar /> : <></>}
+      {/* {user.role === "admin" ? <SideBar /> : <></>} */}
       <Routes>
         <Route path="/" element={<NavBar user={user} />}>
           <Route index element={<Home />} />

@@ -16,9 +16,9 @@ namespace DynamiBugPlannerBackend.Data
         [Column(TypeName = "VARCHAR(5)")]
         public bool IsArchived { get; set; } 
 
-        // [ForeignKey(nameof(User))]
-        // public string? UserId { get; set; }
-        // public UserModel User { get; set; } = null!;
+        [ForeignKey(nameof(User))]
+        public long UserId { get; set; }
+        public UserModel User { get; set; } = null!;
 
         // [ForeignKey(nameof(Github))]        
         // public long? GithubId { get; set; }

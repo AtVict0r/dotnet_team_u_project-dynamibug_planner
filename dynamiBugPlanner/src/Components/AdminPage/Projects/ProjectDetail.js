@@ -78,6 +78,7 @@ function DisplayProject({ api, id }) {
     name: "",
     description: "",
     githubId: null,
+    user: {username: ""},
     reports: [],
   });
 
@@ -124,8 +125,7 @@ function DisplayProject({ api, id }) {
         <button onClick={deleteProject} className="btn btn-primary RDbutton">
           Delete Project
         </button>
-        <div className="row" style={{ marginTop: "1rem" }}></div>
-        <div className="row">
+        <div className="row" style={{ marginTop: "1rem" }}>
           <label className="RDlabel col-15" htmlFor="projectId">
             Id:{" "}
           </label>{" "}
@@ -134,6 +134,18 @@ function DisplayProject({ api, id }) {
             id="projectId"
             className="RDinput col-25"
             value={projectDetail.id}
+            readOnly
+          />
+        </div>
+        <div className="row">
+          <label className="RDlabel col-15" htmlFor="projectOwner">
+            Username:{" "}
+          </label>{" "}
+          <input
+            type="text"
+            id="projectOwner"
+            className="RDinput col-25"
+            value={projectDetail.user.userName}
             readOnly
           />
         </div>
