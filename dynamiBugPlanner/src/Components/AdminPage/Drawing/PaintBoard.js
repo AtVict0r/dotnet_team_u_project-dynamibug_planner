@@ -11,17 +11,6 @@ import {
   getElementAtPosition,
 } from "./element";
 
-function useSessionStorage(key, defaultValue = "") {
-  const [state, setState] = useState(() => {
-    return JSON.parse(sessionStorage.getItem(key)) || defaultValue;
-  });
-  useEffect(() => {
-    
-    sessionStorage.setItem(key, JSON.stringify(state));
-  }, [key, state]);
-  return [state, setState];
-}
-
 function PaintBoard() {
   const [points, setPoints] = useState([]);
   const [path, setPath] = useState([]);
@@ -38,22 +27,13 @@ function PaintBoard() {
   const [width, setWidth] = useState(1);
   const [shapeWidth, setShapeWidth] = useState(1);
   const [popped, setPopped] = useState(false);
-  const [imageData, setImageData] = useSessionStorage("canvasImageData");
+  // const [imageData, setImageData] = useSessionStorage("canvasImageData");
 
   useEffect(() => {
     const canvas = document.getElementById("canvas");
     const context = canvas.getContext("2d");
     context.lineCap = "round";
     context.lineJoin = "round";
-    if(imageData !== null && typeof imageData !== 'undefined' && imageData !== "") {
-      // console.log(imageData);
-      // var image = new Image();
-      // image.src = imageData;
-      // context.clearRect(0, 0, canvas.width, canvas.height);
-      // context.drawImage(image, 0, 0);
-
-      context.putImageData(imageData.data, 0, 0);
-    }
 
     context.save();
 
@@ -329,8 +309,6 @@ function PaintBoard() {
       setIsDrawing(false);
     }
     setAction("none");
-    setImageData();
-    console.log("Save here place");
   };
 
   return (
@@ -345,6 +323,7 @@ function PaintBoard() {
         setPath={setPath}
         colorWidth={colorWidth}
         setShapeWidth={setShapeWidth}
+        id={window.location.search.substring(1)}
       />
       <canvas
         id="canvas"

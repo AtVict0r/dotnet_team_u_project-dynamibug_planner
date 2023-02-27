@@ -24,6 +24,7 @@ import Footer from "./Components/Footer";
 let user = {
   role: "admin",
   username: "Admin",
+  email: "admin@example.com",
   isSignedIn: true,
   name: "John Doe",
 };
@@ -36,16 +37,16 @@ export default function Page() {
       <Routes>
         <Route path="/" element={<NavBar user={user} />}>
           <Route index element={<Home />} />
-          <Route path="/NewReport" element={<AddReport />} />
-          <Route path="/Browse" element={<Browse />} />
-          <Route path="/Report" element={<Report />} />
-          <Route path="/EditReport" element={<UpdateReport />} />
-          <Route path="/NewProject" element={<AddProject />} />
-          <Route path="/Projects" element={<Projects />} />
+          <Route path="/NewReport" element={<AddReport api={api} user={user} />} />
+          <Route path="/Browse" element={<Browse api={api} />} />
+          <Route path="/Report" element={<Report api={api} user={user} />} />
+          <Route path="/EditReport" element={<UpdateReport api={api} />} />
+          <Route path="/NewProject" element={<AddProject api={api} user={user} />} />
+          <Route path="/Projects" element={<Projects api={api} />} />
           <Route path="/Project" element={<Project api={api} />} />
-          <Route path="/EditProject" element={<UpdateProject />} />
-          <Route path="/Plan" element={<Plan />} />
-          <Route path="/Email" element={<Contact />} />
+          <Route path="/EditProject" element={<UpdateProject api={api} />} />
+          <Route path="/Plan" element={<Plan api={api} />} />
+          <Route path="/Email" element={<Contact api={api} user={user} />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

@@ -1,9 +1,7 @@
-import { BugPlannerApi } from "../../../API/apiClient/BugPlannerApi";
 import React, { useState } from "react";
+import Captcha from "../../CustomCaptcha";
 
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
-
-export default function AddProject() {
+export default function AddProject({api}) {
   const [id] = useState(window.location.search.substring(1));
   const [projectStorage] = useState(JSON.parse(window.sessionStorage.getItem("projectDetail")));
   const [projectName, setProjectName] = useState(projectStorage.name);
@@ -19,19 +17,37 @@ export default function AddProject() {
     result
       .json()
       .then(window.location.href = `/Project?${id}`)
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err.message);
+        alert("Failed! Try Again!");
+        document.getElementById("userIsHuman").checked = false;
+      });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    putData();
+  const handleChange = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    if (list.contains("inputWarning")) { list.remove("inputWarning") }
+  }
+
+  const handleInvalid = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    list.add("inputWarning");
   };
 
   if (id == projectStorage.id) {
     return (
       <div className="container">
-        <h4>Add Report</h4>
-        <form className="ARcontainer container" onSubmit={handleSubmit}>
+        <h4>Edit Project</h4>
+        <a href={`/Project?${id}`}>Back to Project</a>
+        <br />
+        <a href="/Projects">Go to Projects</a>
+        <br />
+        <a href="/Browse">Go to Reports</a>
+        <br />
+        <form className="ARcontainer container" onSubmit={(e) => {
+          e.preventDefault();
+          putData();
+        }}>
           <div className="row">
             <label className="ARlabel" htmlFor="projectName">
               Name
@@ -42,7 +58,9 @@ export default function AddProject() {
               id="projectName"
               onChange={(event) => {
                 setProjectName(event.target.value);
+                handleChange(event.target.id);
               }}
+              onInvalid={(event) => handleInvalid(event.target.id) }
               value={projectName}
               required
             />
@@ -59,20 +77,13 @@ export default function AddProject() {
               value={projectDescription}
               onChange={(event) => {
                 setProjectDescription(event.target.value);
+                handleChange(event.target.id);
               }}
+              onInvalid={(event) => handleInvalid(event.target.id) }
+              required
             ></textarea>
           </div>
-          <div className="row">
-            <label className="ARlabel" htmlFor="userIsHuman">
-              I am not a robot
-            </label>
-            <input
-              type="checkbox"
-              className="ARcheckbox"
-              id="userIsHumman"
-              value="I am not a robot."
-            />
-          </div>
+          <Captcha />
           <input
             type="submit"
             className="ARbutton ARinput btn btn-primary"

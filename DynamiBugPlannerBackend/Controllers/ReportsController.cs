@@ -85,6 +85,12 @@ namespace DynamiBugPlannerBackend.Controllers
             {
                 var report = _mapper.Map<ReportModel>(reportDTO);
                 await _unitOfWork.Reports.Insert(report);
+                var plan = _mapper.Map<BugFixModel>(new CreateBugFixDTO
+                    {
+                        Html = "",
+                        ReportId = report.Id,
+                    });
+                await _unitOfWork.Plans.Insert(plan);
                 await _unitOfWork.Save();
                 return CreatedAtRoute("GetReport", new { id = report.Id }, report);
             }

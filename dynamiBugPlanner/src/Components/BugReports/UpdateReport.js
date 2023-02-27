@@ -1,10 +1,8 @@
 import "./AddReport.css";
-import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
 import React, { useState } from "react";
+import Captcha from "../CustomCaptcha";
 
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
-
-export default function UpdateReport() {
+export default function UpdateReport({api}) {
   const [id] = useState(window.location.search.substring(1));
   const [reportStorage] = useState(JSON.parse(window.sessionStorage.getItem("reportDetail")));
   const [reportType, setReportType] = useState(reportStorage.type);
@@ -25,22 +23,31 @@ export default function UpdateReport() {
     result
       .json()
       .then(window.location.href = `/Report?${id}`)
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err.message);
+        alert("Failed! Try Again!");
+        document.getElementById("userIsHuman").checked = false;
+      });
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    putData();
+  const handleChange = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    if (list.contains("inputWarning")) { list.remove("inputWarning") }
+  }
+
+  const handleInvalid = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    list.add("inputWarning");
   };
 
   if (id == reportStorage.id) {
     return (
       <div className="container">
-        <h4>Update Report</h4>
+        <h4>Edit Report</h4>
         <a href={`/Report?${id}`}>Back to report</a>
         <br />
         <a href="/Browse">Back to list</a>
-        <form className="ARcontainer container" onSubmit={handleSubmit}>
+        <form className="ARcontainer container" onSubmit={(e) => {e.preventDefault(); putData()}}>
           <div>
             <div className="row">
               <label className="ARlabel" htmlFor="reportType">
@@ -113,7 +120,9 @@ export default function UpdateReport() {
               value={reportTitle}
               onChange={(event) => {
                 setReportTitle(event.target.value);
+                handleChange(event.target.id);
               }}
+              onInvalid={(event) => handleInvalid(event.target.id) }
               required
             />
           </div>
@@ -129,24 +138,16 @@ export default function UpdateReport() {
               value={reportDescription}
               onChange={(event) => {
                 setReportDescription(event.target.value);
+                handleChange(event.target.id);
               }}
+              onInvalid={(event) => handleInvalid(event.target.id) }
               required
             ></textarea>
           </div>
           <div className="row">
             <input className="ARinput" type="file" id="fileUpload" multiple />
           </div>
-          <div className="row">
-            <label className="ARlabel" htmlFor="userIsHuman">
-              I am not a robot
-            </label>
-            <input
-              type="checkbox"
-              className="ARcheckbox"
-              id="userIsHumman"
-              value="I am not a robot."
-            />
-          </div>
+          <Captcha />
           <input
             type="submit"
             className="ARbutton ARinput btn btn-primary"

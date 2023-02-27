@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.inputWarning {
+  outline: none;
+  border-color: #962a09;
+  box-shadow: 0 0 10px #962a09;
+}

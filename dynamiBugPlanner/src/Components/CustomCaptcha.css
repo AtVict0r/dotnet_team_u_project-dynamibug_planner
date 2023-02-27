@@ -1,0 +1,35 @@
+  .captchaContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .captchaBox {
+    background-color: #f1f2f2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  
+  .captcha {
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 2em;
+    padding: 3px;
+    border-radius: 5px;
+    text-decoration: line-through;
+    color: #a0a0a0;
+    background-color: #0c0c0c;
+  }
+  
+  .captchaRestart a {
+    text-decoration: none;
+  }
+  
+  .captchaErrmsg {
+    color: black;
+    padding: 5px;
+    transition: 0.5s ease;
+  }

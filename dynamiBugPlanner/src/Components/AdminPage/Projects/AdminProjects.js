@@ -1,9 +1,6 @@
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
-import { BugPlannerApi } from "../../../API/apiClient/BugPlannerApi";
 import React, { useEffect, useState } from "react";
-
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 function ProjectCards({ id, name, description }) {
   return (
@@ -19,7 +16,7 @@ function ProjectCards({ id, name, description }) {
   );
 }
 
-function ListProjects() {
+function ListProjects({api}) {
   const [projects, setProjects] = useState(null);
 
   useEffect(() => {
@@ -46,13 +43,17 @@ function ListProjects() {
   }
 }
 
-export default function AdminProjects() {
+export default function AdminProjects({api}) {
+  sessionStorage.removeItem('navSearchBar');
   return (
     <div className="container">
       <h1>Projects</h1>
-      <a href="NewProject" className="btn btn-primary">Add Project</a>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <a href="/Browse">Go to Reports</a>
+        <a href="NewProject" className="btn btn-primary">Add Project</a>
+      </div>
       <Row>
-        <ListProjects />
+        <ListProjects api={api} />
       </Row>
     </div>
   );

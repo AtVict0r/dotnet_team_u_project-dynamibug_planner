@@ -1,9 +1,6 @@
 import "./Browse.css";
 import Table from 'react-bootstrap/Table';
-import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
 import React, { useEffect, useState } from "react";
-
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 function ListProjectName({ projectNames }) {
   return projectNames.map((projectName) => {
@@ -15,7 +12,7 @@ function ListProjectName({ projectNames }) {
   });
 }
 
-function ReportTable() {
+function ReportTable({api}) {
   const [projectName, setProjectName] = useState("");
   const [reportType, setReportType] = useState("");
   const [reportStatus, setReportStatus] = useState("");
@@ -191,11 +188,11 @@ function ReportTable() {
   );
 }
 
-export default function Browse() {
+export default function Browse({api}) {
   return (
     <div className="container">
       <h1>Browse</h1>
-      <ReportTable />
+      <ReportTable api={(api)}/>
     </div>
   );
 }

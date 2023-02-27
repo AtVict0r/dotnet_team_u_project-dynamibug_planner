@@ -1,6 +1,3 @@
-body {
-  overflow: hidden; /* Hide scrollbars */
-}
 .color-picker-container {
   position: relative;
 }

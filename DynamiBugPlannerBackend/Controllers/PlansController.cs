@@ -68,33 +68,6 @@ namespace DynamiBugPlannerBackend.Controllers
             }
         }
 
-        // POST: api/Plans
-        // [Authorize(Roles = "Admin")]
-        [HttpPost(Name = "CreatePlan")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreatePlan([FromBody] CreateBugFixDTO planDTO)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var plan = _mapper.Map<BugFixModel>(planDTO);
-                await _unitOfWork.Plans.Insert(plan);
-                await _unitOfWork.Save();
-                return CreatedAtRoute("GetPlan", new { id = plan.Id }, plan);
-            }
-            catch (Exception ex)
-            {
-
-                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
-            }
-        }
-
         // PUT: api/Plans/5
         // [Authorize(Roles = "Admin")]
         [HttpPut("{id:long}", Name = "UpdatePlan")]

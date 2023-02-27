@@ -18,6 +18,8 @@ function NavCard({ src, title }) {
 }
 
 export default function Home() {
+  sessionStorage.clear();
+
   return (
     <div style={{
       marginTop: "15vh",

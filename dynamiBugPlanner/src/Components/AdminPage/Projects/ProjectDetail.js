@@ -5,13 +5,14 @@ function useSessionStorage(key, defaultValue = "") {
   const [state, setState] = useState(() => {
     return JSON.parse(sessionStorage.getItem(key)) || defaultValue;
   });
-  useState(() => {
+  useEffect(() => {
     sessionStorage.setItem(key, JSON.stringify(state));
   }, [key, state]);
   return [state, setState];
 }
 
 export default function ProjectDetail({ api }) {
+  sessionStorage.removeItem('navSearchBar');
   let projectDetailId = window.location.search;
   if (projectDetailId === null || projectDetailId === "") {
     window.location.href = "/Projects";

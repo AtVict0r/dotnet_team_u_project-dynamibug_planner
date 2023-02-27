@@ -15,7 +15,11 @@ import {
   Download,
 } from "../../../Assets/svg";
 import ColourPicker from "./ColourPicker";
-import { download } from "./download";
+import rough from "roughjs/bundled/rough.esm";
+import { BugPlannerApi } from "../../../API/apiClient/BugPlannerApi";
+// import { download } from "./download";
+
+const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
 
 export default function Swatch({
   toolType,
@@ -27,8 +31,28 @@ export default function Swatch({
   setPath,
   colorWidth,
   setShapeWidth,
+  id,
 }) {
   const [displayStroke, setDisplayStroke] = useState(false);
+  const [imageData, setImageData] = useState({});
+
+  const fetchData = async () => {
+    let result = await api.getPlan(id);
+    result
+      .json()
+      .then((json) => setImageData(json.html))
+      .catch((err) => console.log(err.message));
+  };
+
+  const putData = async () => {
+    let result = await api.updatePlan(Number(id), {
+      html: imageData,
+    });
+    result
+      .json()
+      .then(alert("Saved image"))
+      .catch((err) => console.log(err.message));
+  };
 
   const handleClickStroke = () => {
     setDisplayStroke(!displayStroke);
@@ -57,6 +81,7 @@ export default function Swatch({
       if (width > 1) setShapeWidth((prev) => prev - 3);
     }
   };
+
   return (
     <div>
       <div className="row">
@@ -216,8 +241,22 @@ export default function Swatch({
               data-placement="top"
               title="Reset"
               onClick={() => {
+                fetchData();
                 setElements([]);
                 setPath([]);
+                const canvas = document.getElementById("canvas");
+                const context = canvas.getContext("2d");
+                const roughCanvas = rough.canvas(canvas);
+                let image = new Image();
+                if (typeof imageData !== "undefined") {
+                  image.src = imageData;
+                  roughCanvas.drawImage(image, 0, 0);
+                  // context.putImageData(imageData.data, 0, 0);
+                  context.save();
+                  console.log("Restored image");
+                } else {
+                  console.log("imageData is undefined");
+                }
                 return;
               }}
             >
@@ -229,7 +268,14 @@ export default function Swatch({
               data-placement="top"
               title="Save"
             >
-              <a href="#" onClick={download}>
+              <a
+                href="#"
+                onClick={() => {
+                  const canvas = document.getElementById("canvas");
+                  setImageData(canvas.toDataURL());
+                  putData();
+                }}
+              >
                 <Download />
               </a>
             </button>

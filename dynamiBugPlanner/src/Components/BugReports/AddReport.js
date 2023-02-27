@@ -1,12 +1,10 @@
 import "./AddReport.css";
-import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
 import React, { useEffect, useState } from "react";
+import Captcha from "../CustomCaptcha";
 
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
-
-export default function AddReport() {
+export default function AddReport({ api }) {
   const [listProject, setListProject] = useState([]);
-  const [projectId, setProjectId] = useState(0);
+  const [projectId, setProjectId] = useState("");
   const [reportType, setReportType] = useState("Bug");
   const [reportTitle, setReportTitle] = useState("");
   const [reportDescription, setReportDescription] = useState("");
@@ -32,7 +30,7 @@ export default function AddReport() {
     fetchData();
   }, []);
 
-   const postData = async () => {
+  const postData = async () => {
     let result = await api.createReport({
       type: reportType,
       title: reportTitle,
@@ -43,16 +41,25 @@ export default function AddReport() {
     result
       .json()
       .then((data) => window.location.href = `/Report?${data.id}`)
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err.message)
+        alert("Failed! Try Again!");
+        document.getElementById("userIsHuman").checked = false;
+      });
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    postData();
+  const handleChange = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    if (list.contains("inputWarning")) { list.remove("inputWarning") }
+  }
+
+  const handleInvalid = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    list.add("inputWarning");
   };
 
   return (
-    <form className="ARcontainer container" onSubmit={handleSubmit}>
+    <form className="ARcontainer container" onSubmit={(e) => {e.preventDefault(); postData()}}>
       <div>
         <div className="row">
           <label className="ARlabel" htmlFor="projectId">
@@ -61,9 +68,13 @@ export default function AddReport() {
           <select
             className="ARinput"
             id="projectId"
+            name="projectId"
+            value={projectId}
             onChange={(event) => {
               setProjectId(event.target.value);
+              handleChange(event.target.id);
             }}
+            onInvalid={(event) => { handleInvalid(event.target.id) }}
             required
           >
             <option value=""></option>
@@ -77,6 +88,8 @@ export default function AddReport() {
           <select
             className="ARinput"
             id="reportType"
+            name="reportType"
+            value={reportType}
             onChange={(event) => {
               setReportType(event.target.value);
             }}
@@ -97,9 +110,13 @@ export default function AddReport() {
           className="ARinput"
           type="text"
           id="reportTitle"
+          name="reportTitle"
+          value={reportTitle}
           onChange={(event) => {
             setReportTitle(event.target.value);
+            handleChange(event.target.id);
           }}
+          onInvalid={(event) => handleInvalid(event.target.id) }
           required
         />
       </div>
@@ -112,33 +129,25 @@ export default function AddReport() {
           rows="10"
           cols="70"
           id="reportDescription"
+          name="reportDescription"
+          value={reportDescription}
           onChange={(event) => {
             setReportDescription(event.target.value);
+            handleChange(event.target.id);
           }}
+          onInvalid={(event) => handleInvalid(event.target.id) }
           required
         ></textarea>
       </div>
       <div className="row">
-        <input className="ARinput" type="file" id="fileUpload" multiple />
+        <input className="ARinput" type="file" id="fileUpload" name="fileUpload" multiple />
       </div>
-      <div className="row">
-        <label className="ARlabel" htmlFor="userIsHuman">
-          I am not a robot
-        </label>
-        <input
-          type="checkbox"
-          className="ARcheckbox"
-          id="userIsHumman"
-          value="I am not a robot."
-        />
-      </div>
-      <a href="/Report">
-        <input
-          type="submit"
-          className="ARbutton ARinput btn btn-primary"
-          value="Add"
-        />
-      </a>
+      <Captcha />
+      <input
+        type="submit"
+        className="ARbutton ARinput btn btn-primary"
+        value="Add"
+      />
     </form>
   );
 }

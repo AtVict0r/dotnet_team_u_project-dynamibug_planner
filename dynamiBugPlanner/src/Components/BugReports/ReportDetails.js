@@ -1,9 +1,7 @@
 import "./ReportDetails.css";
 import "../Comments/GetComments.css";
 import React, { useEffect, useState } from "react";
-import { BugPlannerApi } from "../../API/apiClient/BugPlannerApi";
-
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
+import Captcha from "../CustomCaptcha";
 
 function useSessionStorage(key, defaultValue = "") {
   const [state, setState] = useState(() => {
@@ -15,7 +13,8 @@ function useSessionStorage(key, defaultValue = "") {
   return [state, setState];
 }
 
-export default function ReportDetails() {
+export default function ReportDetails({api}) {
+  sessionStorage.removeItem('navSearchBar');
   let reportDetailId = window.location.search;
   if (reportDetailId === null || reportDetailId === "") {
     window.location.href = "/Browse";
@@ -28,14 +27,14 @@ export default function ReportDetails() {
         <div className="container">
           <h3>Report Detail</h3>
           <a href="/Browse">Back to list</a>
-          <DisplayReport id={reportDetailId} />
+          <DisplayReport id={reportDetailId} api={api} />
         </div>
       );
     }
   }
 }
 
-function DisplayReport({ id }) {
+function DisplayReport({ id, api }) {
   const [reportDetail, setReportDetail] = useSessionStorage("reportDetail", {
     id: 0,
     type: "",
@@ -51,7 +50,10 @@ function DisplayReport({ id }) {
   });
   const [newComment, setNewComment] = useState("");
   const [addComment, setAddComment] = useState(true);
-  const toggleAddComment = () => setAddComment(!addComment);
+  const toggleAddComment = () => {
+    setAddComment(!addComment);
+    handleChange("newComment");
+  }
 
   const postComment = async () => {
     let result = await api.createComment({
@@ -91,6 +93,16 @@ function DisplayReport({ id }) {
       .then(window.location.reload())
       .catch((err) => console.log(err.message));
   }
+
+  const handleChange = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    if (list.contains("inputWarning")) { list.remove("inputWarning") }
+  }
+
+  const handleInvalid = (tagId) => {
+    const list = document.getElementById(tagId).classList;
+    list.add("inputWarning");
+  };
 
   const showComments = (comments) => {
     if (typeof comments !== "undefined") {
@@ -209,16 +221,12 @@ function DisplayReport({ id }) {
         >
           Goto Project
         </a>
-        {reportDetail.plan !== null ? (
           <a
             href={`/Plan?${reportDetail.plan.id}`}
             className="btn btn-primary RDbutton"
           >
             Goto Plan
           </a>
-        ) : (
-          <></>
-        )}
         <button
           onClick={deleteReport}
           className="btn btn-primary RDbutton"
@@ -230,7 +238,7 @@ function DisplayReport({ id }) {
           value="Add Comment"
         />
         <div style={{ marginTop: "1rem", display: (addComment ? "none" : "block"), }}>
-          <form>
+          <form onSubmit={(e) => { e.preventDefault(); postComment()}}>
             <div className="row Crow">
               <label className="Clabel">New Comment: </label>{" "}
               <textarea
@@ -239,14 +247,17 @@ function DisplayReport({ id }) {
                 id="newComment"
                 value={newComment}
                 onChange={(event) => {
-                  setNewComment(event.target.value);
+                  setNewComment(event.target.value); 
+                  handleChange(event.target.id);
                 }}
+                onInvalid={(event) => handleInvalid(event.target.id) }
+                required
               />
             </div>
+            <Captcha />
             <input
-              type="button"
+              type="submit"
               className="btn btn-primary RDbutton"
-              onClick={postComment}
               value="Post Comment"
             />
           </form>
