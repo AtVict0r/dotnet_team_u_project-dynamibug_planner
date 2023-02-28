@@ -14,7 +14,7 @@ function useSessionStorage(key, defaultValue = "") {
   return [state, setState];
 }
 
-export default function ReportDetails({api}) {
+export default function ReportDetails({api, user}) {
   sessionStorage.removeItem('navSearchBar');
   let reportDetailId = window.location.search;
   if (reportDetailId === null || reportDetailId === "") {
@@ -28,7 +28,7 @@ export default function ReportDetails({api}) {
         <div className="container">
           <h3>Report Detail</h3>
           <a href="/Browse">Back to list</a>
-          <DisplayReport id={reportDetailId} api={api} />
+          <DisplayReport id={reportDetailId} api={api} user={user} />
         </div>
       );
     }
@@ -59,9 +59,9 @@ function DisplayReport({ id, api, user }) {
 
   const postComment = async () => {
     let result = await api.createComment({
-      userId: user.id,
+      userId: Number(user.id),
       comment: newComment,
-      bugId: reportDetail.id,
+      bugId: Number(reportDetail.id),
       createDate: new Date().toISOString(),
     });
     result
