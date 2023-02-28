@@ -1,6 +1,6 @@
 import "./Browse.css";
-import Table from 'react-bootstrap/Table';
 import React, { useEffect, useState } from "react";
+import ListReports from "./ListReports";
 
 function ListProjectName({ projectNames }) {
   return projectNames.map((projectName) => {
@@ -12,7 +12,7 @@ function ListProjectName({ projectNames }) {
   });
 }
 
-function ReportTable({api}) {
+function ReportTable({ api }) {
   const [projectName, setProjectName] = useState("");
   const [reportType, setReportType] = useState("");
   const [reportStatus, setReportStatus] = useState("");
@@ -24,16 +24,20 @@ function ReportTable({api}) {
   useEffect(() => {
     const fetchData = async () => {
       let result = await api.getReports();
-      result.json().then((json) => {
-        setReports(json);
-      })
-      .catch((err) => console.log(err.message));;
+      result
+        .json()
+        .then((json) => {
+          setReports(json);
+        })
+        .catch((err) => console.log(err.message));
 
       result = await api.getProjectNames();
-      result.json().then((json) => {
-        setListProject(json);
-      })
-      .catch((err) => console.log(err.message));;
+      result
+        .json()
+        .then((json) => {
+          setListProject(json);
+        })
+        .catch((err) => console.log(err.message));
     };
     fetchData();
   }, []);
@@ -64,28 +68,6 @@ function ReportTable({api}) {
       return report.priority === reportPriority;
     });
   }
-
-  let listReports = filteredReports.map((report) => {
-    const date = new Date(report.modifyDate);
-    return (
-      <tr key={report.id}>
-        <td>
-          <a href={`/Project?${report.project.id}`}>
-            {report.project.name}
-          </a>
-        </td>
-        <td>
-          <a href={`/Report?${report.id}`}>
-            {report.title}
-          </a>
-        </td>
-        <td>{report.type}</td>
-        <td>{report.status}</td>
-        <td>{report.priority}</td>
-        <td>{date.toLocaleString()}</td>
-      </tr>
-    );
-  });
 
   return (
     <>
@@ -168,31 +150,16 @@ function ReportTable({api}) {
       <br />
       <a href="/NewReport">Create New Bug Report</a>
       <br />
-      <div>
-        <Table>
-          <thead>
-            <tr>
-              <th>Project Name</th>
-              <th>Report Title</th>
-              <th>Report Type</th>
-              <th>Report Status</th>
-              <th>Report Priority</th>
-              <th>Report Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>{listReports}</tbody>
-        </Table>
-      </div>
+      <ListReports reports={filteredReports} />
     </>
   );
 }
 
-export default function Browse({api}) {
+export default function Browse({ api }) {
   return (
     <div className="container">
       <h1>Browse</h1>
-      <ReportTable api={(api)}/>
+      <ReportTable api={api} />
     </div>
   );
 }

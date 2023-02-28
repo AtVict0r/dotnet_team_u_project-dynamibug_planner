@@ -2,94 +2,96 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 export default function PlanFix({ api }) {
-  const [id] = useState(window.location.search.substring(1));
+  const [reportId] = useState(
+    Number(sessionStorage.getItem("reportDetail").id) || Number(window.location.search.substring(1))
+  );
   let canvas;
-  const [reportId] = useState(Number(sessionStorage.getItem('reportDetail').id) || Number(id));
   const [context, setContext] = useState();
   const [currentTool, setCurrentTool] = useState("DrawTool");
   const [isDrawing, setIsDrawing] = useState(false);
-  const [imageData, setImageData] = useState({});
   const [uploadedImage, setUploadedImage] = useState({});
   const [eventPosition, setEventPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     canvas = document.getElementById("whiteboard");
     setContext(canvas.getContext("2d"));
-    // console.log("Calling useEffect");
   });
+  
+  const fetchData = async () => {
+    let result = await api.getPlan(reportId);
+    result
+      .json()
+      .then((json) => refreshPlan(json.html))
+      .catch((err) => console.log(err.message));
+  };
 
-  useState(() => {
-    const fetchData = async () => {
-      let result = await api.getPlan(reportId);
-      result
-        .json()
-        .then((json) => setImageData(json.html))
-        .catch((err) => console.log(err.message));
-    };
-    // console.log("Calling useState");
-    fetchData();
-  });
-
-  const putData = async () => {
+  const putData = async (data) => {
     await api.updatePlan(Number(reportId), {
-      html: imageData,
+      html: data,
     });
   };
 
-  const refreshPlan = () => {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    let image = new Image();
+  const refreshPlan = (imageData) => {
+    let image = new Image()
     image.src = imageData;
-    if (typeof imageData !== "undefined" && imageData != {}) {
-      context.drawImage(image, 0, 0);
-      console.log("Restored image");
-    } else {
-      console.log("imageData is empty");
-    }
+    image.onload = () => {
+      if (typeof imageData !== "undefined" && imageData != "") {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0);
+      } else {
+        console.log("imageData is empty");
+      }
+    }    
   };
 
   const handleMouseDown = (event) => {
     switch (currentTool) {
       case "LineTool": {
         context.beginPath();
+        context.strokeStyle = "black";
+        context.lineWidth = 3;
         context.moveTo(
           event.clientX - canvas.getBoundingClientRect().left,
           event.clientY - canvas.getBoundingClientRect().top
         );
         break;
       }
-      case "EraseTool": case "DrawTool": {
-        setIsDrawing(true);
+      case "EraseTool":
+      case "DrawTool": {
+        setIsDrawing(true);        
+        context.beginPath();
+        context.strokeStyle = currentTool === "EraseTool" ? "white" : "black";
+        context.lineWidth = currentTool === "EraseTool" ? 13 : 3;
         break;
       }
       case "TextTool": {
         setEventPosition({
           x: event.clientX - canvas.getBoundingClientRect().left,
-          y: event.clientY - canvas.getBoundingClientRect().top
+          y: event.clientY - canvas.getBoundingClientRect().top,
         });
         const textBox = document.getElementById("TextTool");
         textBox.hidden = false;
-        textBox.style.left = event.clientX + 'px';
-        textBox.style.top = event.clientY + 'px';
+        textBox.style.left = event.clientX + "px";
+        textBox.style.top = event.clientY + "px";
         // textBox.focus();
         break;
       }
       case "ImageTool": {
         const reader = new FileReader();
         reader.readAsDataURL(uploadedImage);
-        let image = new Image();
         reader.onload = () => {
+          let image = new Image();
           image.src = reader.result;
-          context.drawImage(image, 
-            event.clientX - canvas.getBoundingClientRect().left, 
-            event.clientY - canvas.getBoundingClientRect().top,            
-            100,
-            100);
-            console.log(uploadedImage);
+          image.onload = () => {
+            context.drawImage(
+              image,
+              event.clientX - canvas.getBoundingClientRect().left,
+              event.clientY - canvas.getBoundingClientRect().top,
+              100,
+              100
+            );
+          }
         };
-        // const fileUpload = document.getElementById("TextTool");
-        // const newFileUpload = React.cloneElement(fileUpload, {value: ""});
-        // fileUpload.parentElement.replaceChild(newFileUpload, fileUpload)
       }
     }
   };
@@ -98,17 +100,13 @@ export default function PlanFix({ api }) {
     if (!isDrawing) return;
 
     switch (currentTool) {
-      case "EraseTool": case "DrawTool": {
-        context.beginPath();
-        context.arc(
+      case "EraseTool":
+      case "DrawTool": {
+        context.lineTo(
           event.clientX - canvas.getBoundingClientRect().left,
-          event.clientY - canvas.getBoundingClientRect().top,
-          (currentTool === "EraseTool") ? 10 : 3.5,
-          0,
-          2 * Math.PI
+          event.clientY - canvas.getBoundingClientRect().top
         );
-        context.fillStyle = (currentTool === "EraseTool") ? "white" : "black";
-        context.fill();
+        context.stroke();
         break;
       }
     }
@@ -124,7 +122,8 @@ export default function PlanFix({ api }) {
         context.stroke();
         break;
       }
-      case "EraseTool": case "DrawTool": {
+      case "EraseTool":
+      case "DrawTool": {
         setIsDrawing(false);
         break;
       }
@@ -135,44 +134,98 @@ export default function PlanFix({ api }) {
     const textBox = document.getElementById("TextTool");
     textBox.value = "";
     textBox.hidden = true;
-    context.textBaseline = 'top';
-    context.textAlign = 'left';
-    context.font = '18px sans-serif';
-    context.fillText(txt, eventPosition.x, eventPosition.y)
-
+    context.textBaseline = "top";
+    context.textAlign = "left";
+    context.font = "18px sans-serif";
+    context.fillStyle = "black";
+    context.fillText(txt, eventPosition.x, eventPosition.y);
   };
 
   const planControls = (
     <ul className="row row-cols-auto list-unstyled list">
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Refresh" onClick={refreshPlan} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Refresh"
+          onMouseDown={fetchData}
+        />
       </li>
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Save" onClick={() => {
-          setImageData(canvas.toDataURL());
-          putData();
-        }} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Save"
+          onClick={() => putData(canvas.toDataURL())}
+        />
       </li>
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Clear" onClick={() => {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-        }} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Clear"
+          onClick={() => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+          }}
+        />
       </li>
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Draw Tool" onClick={() => { setCurrentTool("DrawTool") }} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Draw Tool"
+          onClick={() => {
+            setCurrentTool("DrawTool");
+          }}
+        />
       </li>
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Erase Tool" onClick={() => { setCurrentTool("EraseTool") }} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Erase Tool"
+          onClick={() => {
+            setCurrentTool("EraseTool");
+          }}
+        />
       </li>
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Text Tool" onClick={() => { setCurrentTool("TextTool") }} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Text Tool"
+          onClick={() => {
+            setCurrentTool("TextTool");
+          }}
+        />
       </li>
       <li>
-        <input type="button" className="btn btn-outline-primary rounded-pill" value="Line Tool" onClick={() => { setCurrentTool("LineTool") }} />
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Line Tool"
+          onClick={() => {
+            setCurrentTool("LineTool");
+          }}
+        />
       </li>
       <li>
-        <label htmlFor="addImage">Upload Image:</label>{" "}
-        <input id="addImage" name="addImage" className="btn btn-outline-primary rounded-pill" type="file" accept="image/*" onChange={(e) => { setCurrentTool("ImageTool"); setUploadedImage(e.target.files[0]); }} />
+        <input
+          id="addImage"
+          name="addImage"
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            setCurrentTool("ImageTool");
+            setUploadedImage(e.target.files[0]);
+          }}
+          hidden
+        />
+        <input 
+        type="button" 
+        className="btn btn-outline-primary rounded-pill"
+        value="Image Tool" 
+        onClick={() => document.getElementById("addImage").click()}/>
       </li>
     </ul>
   );
@@ -180,6 +233,7 @@ export default function PlanFix({ api }) {
   return (
     <div className="container">
       <h1>Plan Fix</h1>
+      <a href={`/Report?${reportId}`}>Back to Report</a>
       {planControls}
       <canvas
         id="whiteboard"
@@ -188,10 +242,19 @@ export default function PlanFix({ api }) {
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-      >
-      </canvas>
-      <textarea id="TextTool" maxLength="60" style={{ maxHeight: "150px", maxWidth: "150px", resize: "both", position: 'absolute' }} onBlur={(e) => addText(e.target.value)} hidden>
-      </textarea>
+      ></canvas>
+      <textarea
+        id="TextTool"
+        maxLength="60"
+        style={{
+          maxHeight: "150px",
+          maxWidth: "150px",
+          resize: "both",
+          position: "absolute",
+        }}
+        onBlur={(e) => addText(e.target.value)}
+        hidden
+      ></textarea>
     </div>
   );
 }

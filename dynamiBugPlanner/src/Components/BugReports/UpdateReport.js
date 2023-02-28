@@ -25,7 +25,7 @@ export default function UpdateReport({api}) {
       .then(window.location.href = `/Report?${id}`)
       .catch((err) => {
         console.log(err.message);
-        alert("Failed! Try Again!");
+        // alert("Failed! Try Again!");
         document.getElementById("userIsHuman").checked = false;
       });
   }

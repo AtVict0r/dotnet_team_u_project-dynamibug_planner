@@ -17,7 +17,6 @@ export default function AddProject({api}) {
       .then(window.location.href = `/Project?${id}`)
       .catch((err) => {
         console.log(err.message);
-        alert("Failed! Try Again!");
         document.getElementById("userIsHuman").checked = false;
       });
   };

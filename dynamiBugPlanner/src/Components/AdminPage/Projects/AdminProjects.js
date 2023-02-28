@@ -10,7 +10,13 @@ function ProjectCards({ id, name, description }) {
         <a href={`/Project?${id}`}>
           <Card.Title>{name}</Card.Title>
         </a>
-        {description !== null ? <Card.Text>{description}</Card.Text> : <></>}
+        {description !== null ? 
+          <Card.Text>
+            {(description.length > 50)? description.substring(0, 50) : description}
+          </Card.Text> 
+          : 
+          <></>
+        }
       </Card.Body>
     </Card>
   );
@@ -30,7 +36,7 @@ function ListProjects({api}) {
   }, []);
 
   if (projects !== null) {
-    return projects.map((project) => {
+    return projects.sort((a, b) => {return a.name.localeCompare(b.name)}).map((project) => {
       return (
         <ProjectCards
           key={project.id}

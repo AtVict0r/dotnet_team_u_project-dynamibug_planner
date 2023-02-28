@@ -39,11 +39,11 @@ namespace DynamiBugPlannerBackend.Controllers
             }
         }
 
-        // GET: api/Projects/names
-        [HttpGet("{names:alpha}", Name = "GetProjectNames")]
+        // GET: api/Projects/Names
+        [HttpGet("Names", Name = "GetProjectNames")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetProjectNames(string names = "names")
+        public async Task<IActionResult> GetProjectNames()
         {
             try
             {

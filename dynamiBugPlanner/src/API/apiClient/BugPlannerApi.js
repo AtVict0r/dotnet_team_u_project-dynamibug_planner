@@ -15,33 +15,16 @@ export class BugPlannerApi extends HttpClient {
    * No description
    *
    * @tags Comments
-   * @name GetComment
-   * @request GET:/api/Comments/{id}
+   * @name GetReportComments
+   * @request GET:/api/Comments/Report/{id}
    * @response `200` `void` Success
    * @response `404` `ProblemDetails` Not Found
    * @response `500` `void` Server Error
    */
-  getComment = (id, params = {}) =>
+  getReportComments = (id, params = {}) =>
     this.request({
-      path: `/api/Comments/${id}`,
+      path: `/api/Comments/Report/${id}`,
       method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Comments
-   * @name DeleteComment
-   * @request DELETE:/api/Comments/{id}
-   * @response `204` `void` Success
-   * @response `400` `ProblemDetails` Bad Request
-   * @response `404` `ProblemDetails` Not Found
-   * @response `500` `void` Server Error
-   */
-  deleteComment = (id, params = {}) =>
-    this.request({
-      path: `/api/Comments/${id}`,
-      method: "DELETE",
       ...params,
     });
   /**
@@ -60,6 +43,23 @@ export class BugPlannerApi extends HttpClient {
       method: "POST",
       body: data,
       type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Comments
+   * @name DeleteComment
+   * @request DELETE:/api/Comments/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  deleteComment = (id, params = {}) =>
+    this.request({
+      path: `/api/Comments/${id}`,
+      method: "DELETE",
       ...params,
     });
   /**
@@ -100,23 +100,6 @@ export class BugPlannerApi extends HttpClient {
   /**
    * No description
    *
-   * @tags Plans
-   * @name DeletePlan
-   * @request DELETE:/api/Plans/{id}
-   * @response `204` `void` Success
-   * @response `400` `ProblemDetails` Bad Request
-   * @response `404` `ProblemDetails` Not Found
-   * @response `500` `void` Server Error
-   */
-  deletePlan = (id, params = {}) =>
-    this.request({
-      path: `/api/Plans/${id}`,
-      method: "DELETE",
-      ...params,
-    });
-  /**
-   * No description
-   *
    * @tags Projects
    * @name GetProjects
    * @request GET:/api/Projects
@@ -152,13 +135,13 @@ export class BugPlannerApi extends HttpClient {
    *
    * @tags Projects
    * @name GetProjectNames
-   * @request GET:/api/Projects/{names}
+   * @request GET:/api/Projects/Names
    * @response `200` `void` Success
    * @response `500` `void` Server Error
    */
   getProjectNames = (params = {}) =>
     this.request({
-      path: `/api/Projects/names`,
+      path: `/api/Projects/Names`,
       method: "GET",
       ...params,
     });

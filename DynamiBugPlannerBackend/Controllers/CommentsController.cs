@@ -25,21 +25,21 @@ namespace DynamiBugPlannerBackend.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Comments/5
-        [HttpGet("{id:long}", Name = "GetComment")]
+        // GET: api/Comments/Report/5
+        [HttpGet("Report/{id:long}", Name = "GetReportComments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetComment(long id)
+        public async Task<IActionResult> GetReportComments(long id)
         {
             try
             {
-                var comment = await _unitOfWork.Comments.Get(q => q.Id == id, new List<string> { "Report", "User" });
+                var comments = await _unitOfWork.Comments.GetAll(expression: q => q.ReportId == id, includes: new List<string> { "User" });
 
-                if (comment != null)
+                if (comments != null)
                 {
-                    var result = _mapper.Map<CommentDTO>(comment);
-                    return Ok(result);
+                    var results = _mapper.Map<IList<CommentDTO>>(comments);
+                    return Ok(results);
                 }
 
                 return NotFound();

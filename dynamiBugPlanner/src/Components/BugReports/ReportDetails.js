@@ -1,5 +1,4 @@
 import "./ReportDetails.css";
-import "../Comments/GetComments.css";
 import React, { useEffect, useState } from "react";
 import Captcha from "../CustomCaptcha";
 import GetComments from "../Comments/GetComments";
@@ -14,8 +13,8 @@ function useSessionStorage(key, defaultValue = "") {
   return [state, setState];
 }
 
-export default function ReportDetails({api, user}) {
-  sessionStorage.removeItem('navSearchBar');
+export default function ReportDetails({ api, user }) {
+  sessionStorage.removeItem("navSearchBar");
   let reportDetailId = window.location.search;
   if (reportDetailId === null || reportDetailId === "") {
     window.location.href = "/Browse";
@@ -45,30 +44,30 @@ function DisplayReport({ id, api, user }) {
     description: "",
     createDate: "",
     modifiedDate: "",
-    user: {userName: ""},
-    project: {id: 0},
-    plan: {id: 0},
-    comments: []
+    user: { userName: "" },
+    project: { id: 0 },
+    plan: { id: 0 },
+    comments: [],
   });
   const [newComment, setNewComment] = useState("");
   const [addComment, setAddComment] = useState(true);
   const toggleAddComment = () => {
     setAddComment(!addComment);
     handleChange("newComment");
-  }
+  };
 
   const postComment = async () => {
     let result = await api.createComment({
       userId: Number(user.id),
       comment: newComment,
-      bugId: Number(reportDetail.id),
+      reportId: Number(reportDetail.id),
       createDate: new Date().toISOString(),
     });
     result
       .json()
       .then(window.location.reload())
       .catch((err) => console.log(err.message));
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,14 +84,16 @@ function DisplayReport({ id, api, user }) {
     let result = await api.deleteReport(id);
     result
       .json()
-      .then(window.location.href = "/Browse")
+      .then((window.location.href = "/Browse"))
       .catch((err) => console.log(err.message));
-  }
+  };
 
   const handleChange = (tagId) => {
     const list = document.getElementById(tagId).classList;
-    if (list.contains("inputWarning")) { list.remove("inputWarning") }
-  }
+    if (list.contains("inputWarning")) {
+      list.remove("inputWarning");
+    }
+  };
 
   const handleInvalid = (tagId) => {
     const list = document.getElementById(tagId).classList;
@@ -187,24 +188,30 @@ function DisplayReport({ id, api, user }) {
         >
           Goto Project
         </a>
-          <a
-            href={`/Plan?${reportDetail.plan.id}`}
-            className="btn btn-primary RDbutton"
-          >
-            Goto Plan
-          </a>
-        <button
-          onClick={deleteReport}
+        <a
+          href={`/Plan?${reportDetail.plan.id}`}
           className="btn btn-primary RDbutton"
-        >Delete Report</button>
+        >
+          Goto Plan
+        </a>
+        <button onClick={deleteReport} className="btn btn-primary RDbutton">
+          Delete Report
+        </button>
         <input
           type="button"
           className="btn btn-primary RDbutton"
           onClick={toggleAddComment}
           value="Add Comment"
         />
-        <div style={{ marginTop: "1rem", display: (addComment ? "none" : "block"), }}>
-          <form onSubmit={(e) => { e.preventDefault(); postComment()}}>
+        <div
+          style={{ marginTop: "1rem", display: addComment ? "none" : "block" }}
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              postComment();
+            }}
+          >
             <div className="row Crow">
               <label className="Clabel">New Comment: </label>{" "}
               <textarea
@@ -213,10 +220,10 @@ function DisplayReport({ id, api, user }) {
                 id="newComment"
                 value={newComment}
                 onChange={(event) => {
-                  setNewComment(event.target.value); 
+                  setNewComment(event.target.value);
                   handleChange(event.target.id);
                 }}
-                onInvalid={(event) => handleInvalid(event.target.id) }
+                onInvalid={(event) => handleInvalid(event.target.id)}
                 required
               />
             </div>
@@ -228,8 +235,9 @@ function DisplayReport({ id, api, user }) {
             />
           </form>
         </div>
-        <div style={{ marginTop: "1rem", }}>
-          <GetComments api={api} comments={reportDetail.comments} />
+        <div style={{ marginTop: "1rem" }}>
+          <h4>Comments</h4>
+          <GetComments api={api} reportId={reportDetail.id}/>
           </div>
       </div>
     );
