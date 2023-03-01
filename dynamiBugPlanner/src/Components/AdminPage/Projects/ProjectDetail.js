@@ -12,7 +12,7 @@ function useSessionStorage(key, defaultValue = "") {
 }
 
 export default function ProjectDetail({ api }) {
-  sessionStorage.removeItem('navSearchBar');
+  sessionStorage.removeItem("navSearchBar");
   let projectDetailId = window.location.search;
   if (projectDetailId === null || projectDetailId === "") {
     window.location.href = "/Projects";
@@ -35,36 +35,86 @@ export default function ProjectDetail({ api }) {
 }
 
 function ShowReportsList({ reports }) {
+  const [startLength, setStartLength] = useState(0);
+
+  useEffect(() => {
+    if(reports.length < startLength){
+      setStartLength(0);
+    }
+    const nextButton = document.getElementById("reportsNextButton");
+    const previousButton = document.getElementById("reportsPreviousButton");
+    if (previousButton != null && nextButton != null) {
+      nextButton.disabled = startLength + 10 >= reports.length;
+      previousButton.disabled = startLength === 0;
+    }
+  }, [startLength, reports]);
+
+  const handleButtonClick = (event) => {
+    if (
+      event.target.id === "reportsNextButton" &&
+      startLength + 10 < reports.length
+    ) {
+      setStartLength(startLength + 10);
+    } else if (event.target.id === "reportsPreviousButton" && startLength > 0) {
+      setStartLength(startLength - 10);
+    }
+  };
+
   if (typeof reports != "undefined" && reports.length > 0) {
     return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Report Title</th>
-            <th>Report Type</th>
-            <th>Report Status</th>
-            <th>Report Priority</th>
-            <th>Report Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            reports.map((report) => {
-              return (
-                <tr key={report.id}>
-                  <td>
-                    <a href={`/Report?${report.id}`}>{report.title}</a>
-                  </td>
-                  <td>{report.type}</td>
-                  <td>{report.status}</td>
-                  <td>{report.priority}</td>
-                  <td>{new Date(report.modifyDate).toLocaleString()}</td>
-                </tr>
-              );
-            })
-          }
-        </tbody>
-      </Table>
+      <div>
+        <Table>
+          <thead>
+            <tr>
+              <th>Report Title</th>
+              <th>Report Type</th>
+              <th>Report Status</th>
+              <th>Report Priority</th>
+              <th>Report Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reports
+              .sort((a, b) => {
+                return a.title.localeCompare(b.title);
+              })
+              .slice(
+                startLength,
+                reports.length > startLength + 10
+                  ? startLength + 10
+                  : reports.length
+              )
+              .map((report) => {
+                return (
+                  <tr key={report.id}>
+                    <td>
+                      <a href={`/Report?${report.id}`}>{report.title}</a>
+                    </td>
+                    <td>{report.type}</td>
+                    <td>{report.status}</td>
+                    <td>{report.priority}</td>
+                    <td>{new Date(report.modifyDate).toLocaleString()}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </Table>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <input
+            id="reportsPreviousButton"
+            type="button"
+            value="Previous"
+            onClick={handleButtonClick}
+          />
+          <input
+            id="reportsNextButton"
+            type="button"
+            value="Next"
+            style={{ width: "75px" }}
+            onClick={handleButtonClick}
+          />
+        </div>
+      </div>
     );
   } else {
     return <p>No information.</p>;
@@ -78,7 +128,7 @@ function DisplayProject({ api, id }) {
     name: "",
     description: "",
     githubId: null,
-    user: {username: ""},
+    user: { username: "" },
     reports: [],
   });
 
@@ -173,7 +223,7 @@ function DisplayProject({ api, id }) {
             className="RDinput col-75"
             value={
               projectDetail.description != null ||
-                projectDetail.description !== ""
+              projectDetail.description !== ""
                 ? projectDetail.description
                 : "No Description"
             }

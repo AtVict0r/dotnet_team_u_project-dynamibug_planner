@@ -12,7 +12,7 @@ function ProjectCards({ id, name, description }) {
         </a>
         {description !== null ? 
           <Card.Text>
-            {(description.length > 50)? description.substring(0, 50) : description}
+            {(description.length > 50)? description.substring(0, 50) + "..." : description}
           </Card.Text> 
           : 
           <></>

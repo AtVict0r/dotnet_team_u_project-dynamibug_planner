@@ -50,6 +50,7 @@ function DisplayReport({ id, api, user }) {
     comments: [],
   });
   const [newComment, setNewComment] = useState("");
+  const [endLength, setEndLength] = useState(0);
   const [addComment, setAddComment] = useState(true);
   const toggleAddComment = () => {
     setAddComment(!addComment);
@@ -78,7 +79,7 @@ function DisplayReport({ id, api, user }) {
         .catch((err) => console.log(err.message));
     };
     fetchData();
-  }, [id, setReportDetail]);
+  }, [id, api, setReportDetail]);
 
   const deleteReport = async () => {
     let result = await api.deleteReport(id);
@@ -186,13 +187,13 @@ function DisplayReport({ id, api, user }) {
           href={`/Project?${reportDetail.project.id}`}
           className="btn btn-primary RDbutton"
         >
-          Goto Project
+          Project Detail
         </a>
         <a
           href={`/Plan?${reportDetail.plan.id}`}
           className="btn btn-primary RDbutton"
         >
-          Goto Plan
+          Plan
         </a>
         <button onClick={deleteReport} className="btn btn-primary RDbutton">
           Delete Report
@@ -235,9 +236,15 @@ function DisplayReport({ id, api, user }) {
             />
           </form>
         </div>
-        <div style={{ marginTop: "1rem" }}>
+        <div style={{ marginTop: "1rem", }}>
           <h4>Comments</h4>
-          <GetComments api={api} reportId={reportDetail.id}/>
+          <GetComments api={api} reportId={reportDetail.id} commentLength={endLength}/>
+          <div style={{display: "flex", justifyContent: "center", width: "75%"}}>
+          {(endLength + 5 < reportDetail.comments.length)? 
+          <input type="button" value="Load More" onClick={() => setEndLength(endLength + 5)}/>
+          :
+          <></>}
+          </div>
           </div>
       </div>
     );

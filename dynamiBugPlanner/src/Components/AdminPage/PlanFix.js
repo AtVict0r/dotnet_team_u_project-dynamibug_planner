@@ -127,6 +127,11 @@ export default function PlanFix({ api }) {
         setIsDrawing(false);
         break;
       }
+      // case "TextTool": {
+      //   const textBox = document.getElementById("TextTool");
+      //   textBox.focus();
+      //   break;
+      // }
     }
   };
 

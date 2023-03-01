@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../Comments/GetComments.css";
 
-export default function GetComments({ api, reportId }) {
+export default function GetComments({ api, reportId, commentLength }) {
   const [userComments, setUserComments] = useState([]);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function GetComments({ api, reportId }) {
         .catch((err) => console.log(err.message));
     };
     fetchData();
-  }, [reportId]);
+  }, [api, reportId]);
 
   const deleteComment = async (commentId) => {
     let result = await api.deleteComment(commentId);
@@ -24,7 +24,9 @@ export default function GetComments({ api, reportId }) {
   };
 
   if (userComments.length > 0) {
-    return userComments.map((userComment) => {
+    return userComments
+    .slice(0, (userComments.length > commentLength + 5) ? commentLength + 5 : userComments.length)
+    .map((userComment) => {
       return (
         <div key={userComment.id}>
           <div className="row Crow">

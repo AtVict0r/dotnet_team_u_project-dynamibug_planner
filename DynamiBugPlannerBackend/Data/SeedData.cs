@@ -20,11 +20,11 @@ public static class SeedData
                 return;   // DB already has data
             }
 
-            SeedUsers(context);
+            SeedUsers(context, 10);
 
-            SeedProjects(context);
+            SeedProjects(context, 15);
 
-            SeedReports(context);
+            SeedReports(context, 20);
         }
     }
 
@@ -56,8 +56,8 @@ public static class SeedData
                  {
                      Role = roles[Random.Shared.Next(roles.Length)],
                      FirstName = firstName,
-                     LastName = lastName,                     
-                     UserName = userName,                     
+                     LastName = lastName,
+                     UserName = userName,
                      Email = $"{userName}@example.com",
                  }
             );
@@ -125,14 +125,17 @@ public static class SeedData
                     }
                 );
 
-                myComments.Add(
+                    for (int k = 1; k <= (size/2 + 3); k++)
+                {
+                    myComments.Add(
                      new CommentModel
                      {
-                         Comment = $"This is a comment for bug report {count}",
+                         Comment = $"This is comment {k} for bug report {count}",
                          ReportId = count,
                          UserId = users[Random.Shared.Next(users.Count())].Id,
                      }
-                );
+                    );
+                }
             }
         }
 
