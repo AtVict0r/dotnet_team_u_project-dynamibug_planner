@@ -20,11 +20,11 @@ public static class SeedData
                 return;   // DB already has data
             }
 
-            SeedUsers(context, 10);
+            SeedUsers(context);
 
-            SeedProjects(context, 15);
+            SeedProjects(context);
 
-            SeedReports(context, 20);
+            SeedReports(context);
         }
     }
 

@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DynamiBugPlannerBackend.Models
 {
-    public class EmailModelDTO
+    public class EmailDTO
     {
         public string SenderName { get; set; } = null!;
 
@@ -10,8 +12,8 @@ namespace DynamiBugPlannerBackend.Models
         
         public string MessageBody { get; set; } = null!;
 
-        // [ForeignKey(nameof(User))]
-        public string UserId { get; set; } = null!;
-        // public UserDTO User { get; set; }
+        [ForeignKey(nameof(User))]
+        public string UserName { get; set; } = null!;
+        public UserDTO User { get; set; } = null!;
     }
 }
