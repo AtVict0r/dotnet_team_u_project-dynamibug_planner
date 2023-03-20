@@ -12,8 +12,6 @@ namespace DynamiBugPlannerBackend.Models
         
         public string MessageBody { get; set; } = null!;
 
-        [ForeignKey(nameof(User))]
         public string UserName { get; set; } = null!;
-        public UserDTO User { get; set; } = null!;
     }
 }

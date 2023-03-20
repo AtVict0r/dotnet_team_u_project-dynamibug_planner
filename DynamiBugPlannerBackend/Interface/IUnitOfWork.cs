@@ -8,6 +8,7 @@ namespace DynamiBugPlannerBackend.Interface
         IGenericRepository<ReportModel> Reports { get; }
         IGenericRepository<BugFixModel> Plans { get; }
         IGenericRepository<CommentModel> Comments { get; }
+        IGenericRepository<UserModel> Users { get; }
         Task Save();
     }
 }

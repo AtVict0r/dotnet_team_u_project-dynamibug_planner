@@ -33,7 +33,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var reports = await _unitOfWork.Reports.GetAll(includes: new List<string> { "Project", "Plan", "Comments", "User" });
+                var reports = await _unitOfWork.Reports.GetAll(expression: q => q.Project.IsArchived == false, includes: new List<string> { "Project", "Plan", "Comments", "User" });
                 var results = _mapper.Map<IList<ReportDTO>>(reports);
                 return Ok(results);
             }

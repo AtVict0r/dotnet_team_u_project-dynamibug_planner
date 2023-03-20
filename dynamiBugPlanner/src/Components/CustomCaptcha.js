@@ -45,8 +45,6 @@ const ShowCaptchaContainer = () => {
         type="button"
         value="Submit"
         onClick={() => {
-            console.log(userCaptchaInput);
-            console.log(captchaOutput);
           if (userCaptchaInput === captchaOutput) {
             document.getElementById("captchaContainer").hidden = true;
             document.getElementById("userIsHuman").checked = true;

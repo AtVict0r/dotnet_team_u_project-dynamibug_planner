@@ -39,6 +39,42 @@ namespace DynamiBugPlannerBackend.Controllers
             }
         }
 
+        // GET: api/Projects/Archived
+        [HttpGet("Archived", Name = "GetArchirvedProjects")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetArchirvedProjects()
+        {
+            try
+            {
+                var projects = await _unitOfWork.Projects.GetAll(expression: q => q.IsArchived == true, includes: new List<string> { "User" });
+                var results = _mapper.Map<IList<ProjectDTO>>(projects);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        // GET: api/Projects/UnArchived
+        [HttpGet("UnArchived", Name = "GetUnArchirvedProjects")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUnArchirvedProjects()
+        {
+            try
+            {
+                var projects = await _unitOfWork.Projects.GetAll(expression: q => q.IsArchived == false, includes: new List<string> { "User" });
+                var results = _mapper.Map<IList<ProjectDTO>>(projects);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
         // GET: api/Projects/Names
         [HttpGet("Names", Name = "GetProjectNames")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -47,7 +83,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var projects = await _unitOfWork.Projects.GetAll();
+                var projects = await _unitOfWork.Projects.GetAll(q => q.IsArchived == false);
                 var results = _mapper.Map<IList<ProjectNamesDTO>>(projects);
                 return Ok(results);
             }

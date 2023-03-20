@@ -100,6 +100,23 @@ export class BugPlannerApi extends HttpClient {
   /**
    * No description
    *
+   * @tags Plans
+   * @name DeletePlan
+   * @request DELETE:/api/Plans/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  deletePlan = (id, params = {}) =>
+    this.request({
+      path: `/api/Plans/${id}`,
+      method: "DELETE",
+      ...params,
+    });
+  /**
+   * No description
+   *
    * @tags Projects
    * @name GetProjects
    * @request GET:/api/Projects
@@ -280,6 +297,129 @@ export class BugPlannerApi extends HttpClient {
     this.request({
       path: `/api/Reports/${id}`,
       method: "DELETE",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name GetUsers
+   * @request GET:/api/Users
+   * @response `200` `void` Success
+   * @response `500` `void` Server Error
+   */
+  getUsers = (params = {}) =>
+    this.request({
+      path: `/api/Users`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name GetUser
+   * @request GET:/api/Users/{username}
+   * @response `200` `void` Success
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  getUser = (username, params = {}) =>
+    this.request({
+      path: `/api/Users/${username}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name CreateUser
+   * @request POST:/api/Users/Register
+   * @response `201` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `500` `void` Server Error
+   */
+  createUser = (data, params = {}) =>
+    this.request({
+      path: `/api/Users/Register`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name SignInUser
+   * @request POST:/api/Users/Login
+   * @response `202` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  signInUser = (data, params = {}) =>
+    this.request({
+      path: `/api/Users/Login`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name UpdateUser
+   * @request PUT:/api/Users/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  updateUser = (id, data, params = {}) =>
+    this.request({
+      path: `/api/Users/${id}`,
+      method: "PUT",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name DeleteUser
+   * @request DELETE:/api/Users/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  deleteUser = (id, params = {}) =>
+    this.request({
+      path: `/api/Users/${id}`,
+      method: "DELETE",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Users
+   * @name ManageUser
+   * @request PUT:/api/Users/Role/{id}
+   * @response `204` `void` Success
+   * @response `400` `ProblemDetails` Bad Request
+   * @response `404` `ProblemDetails` Not Found
+   * @response `500` `void` Server Error
+   */
+  manageUser = (id, data, params = {}) =>
+    this.request({
+      path: `/api/Users/Role/${id}`,
+      method: "PUT",
+      body: data,
+      type: ContentType.Json,
       ...params,
     });
 }

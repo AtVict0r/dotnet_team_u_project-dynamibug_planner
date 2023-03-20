@@ -18,7 +18,7 @@ function NavCard({ src, title }) {
 }
 
 export default function Home() {
-  sessionStorage.clear();
+  // sessionStorage.clear();
 
   return (
     <div style={{

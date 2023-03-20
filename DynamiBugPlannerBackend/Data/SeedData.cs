@@ -31,7 +31,7 @@ public static class SeedData
     private static void SeedUsers(DatabaseContext context, int size = 5)
     {
         List<UserModel> myUsers = new List<UserModel>();
-        string[] roles = { "user", "manager", "admin" };
+        string[] roles = { "user", "manager"};
         string[] names = { "Markus", "Nia", "Natalia", "Joyce", "Gianna", "Lucy", "Landon", "Tony", "Sienna", "Elijah", "Krista", "Jaelyn", "Chandler", "Rosario", "Sherman", "Barry", "Mcknight", "Cohen", "Sanders", "Leon", "Willis", "Griffith", "Li", "Wyatt" };
 
         myUsers.Add(
@@ -39,9 +39,10 @@ public static class SeedData
                  {
                      Role = "admin",
                      UserName = "Admin",
-                     Email = "admin@example.com",
+                     Email = "dynamibugplanner@outlook.com",
                      FirstName = "John",
                      LastName = "Doe",
+                     Password = "JohnD1",
                  }
             );
 
@@ -59,6 +60,7 @@ public static class SeedData
                      LastName = lastName,
                      UserName = userName,
                      Email = $"{userName}@example.com",
+                     Password = firstName + lastName[0] + i+1,
                  }
             );
         }
@@ -67,7 +69,7 @@ public static class SeedData
         context.SaveChanges();
     }
 
-    private static void SeedProjects(DatabaseContext context, int size = 5)
+    private static void SeedProjects(DatabaseContext context, int size = 10)
     {
         List<ProjectModel> myProjects = new List<ProjectModel>();
         List<UserModel> admins = context.Users.ToList().FindAll(u => !u.Role.Contains("user"));
@@ -79,7 +81,8 @@ public static class SeedData
                  {
                      Name = $"Test Project {i}",
                      Description = $"This is test project {i}",
-                     UserId = admins[Random.Shared.Next(admins.Count())].Id
+                     UserId = admins[Random.Shared.Next(admins.Count())].Id,
+                     IsArchived = Random.Shared.Next(size/3) == 1,
                  }
             );
         }

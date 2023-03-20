@@ -1,13 +1,16 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import ReactDOM from "react-dom/client";
-import React from "react";
+import React, { useState } from "react";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { BugPlannerApi } from "./API/apiClient/BugPlannerApi";
 import NavBar from "./Components/NavBar";
 import SideBar from "./Components/AdminPage/SideBar";
 import Home from "./Components/Home";
+import Login from "./Components/Users/Login";
+import Register from "./Components/Users/Register";
+import Profile from "./Components/Users/Profile";
 import AddReport from "./Components/BugReports/AddReport";
 import Browse from "./Components/BugReports/Browse";
 import Report from "./Components/BugReports/ReportDetails";
@@ -21,23 +24,19 @@ import Contact from "./Components/ContactForm";
 import NoPage from "./Components/NoPage";
 import Footer from "./Components/Footer";
 
-let user = {
-  id: 1,
-  role: "admin",
-  username: "Admin",
-  email: "admin@example.com",
-  isSignedIn: true,
-  name: "John Doe",
-};
-const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
-
 export default function Page() {
+  const api = new BugPlannerApi({ baseUrl: "https://localhost:7227" });
+  const [user] = useState(JSON.parse(sessionStorage.getItem('user')));
+
   return (
     <BrowserRouter>
       {/* {user.role === "admin" ? <SideBar /> : <></>} */}
       <Routes>
         <Route path="/" element={<NavBar user={user} />}>
           <Route index element={<Home />} />
+          <Route path="/Login" element={<Login api={api} />} />
+          <Route path="/Register" element={<Register api={api} />} />
+          <Route path="/Profile" element={<Profile api={api} userid={user} />} />
           <Route path="/NewReport" element={<AddReport api={api} user={user} />} />
           <Route path="/Browse" element={<Browse api={api} />} />
           <Route path="/Report" element={<Report api={api} user={user} />} />

@@ -29,14 +29,14 @@ function BrandLogo() {
  * and logout links.
  */
 function UserLogin({user}) {
-  if (user.isSignedIn) {
+  
+  if (user !== null) {
     return (
       <Nav className="me-auto">
-        <Nav.Link href="/Profile">{user.username}</Nav.Link>
-        <Nav.Link href="/Logout">Logout</Nav.Link>
+        <Nav.Link href="/Profile">{user.userName}</Nav.Link>
+        <Nav.Link href={window.reload} onClick={() => {sessionStorage.removeItem('user'); window.location.reload(); }}>Logout</Nav.Link>
       </Nav>
     );
-    
   } else {
     return (
       <Nav className="ms-auto">
@@ -54,7 +54,7 @@ function UserLogin({user}) {
  * BrandLogo component, a Navbar.Toggle component, and a Navbar.Collapse component inside of it. The
  * Navbar.Collapse component has a SearchComponent component and a UserLogin component inside of it.
  */
-export default function NavBar({user}) {
+export default function NavBar({user, setUser}) {
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -63,7 +63,7 @@ export default function NavBar({user}) {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <SearchBar showSearchBar={(useLocation().pathname == "/")}/>
-            <UserLogin user={user}/>
+          {(typeof user != 'undefined')? <UserLogin user={user} setUser={setUser}/> : <></>}
           </Navbar.Collapse>
         </Container>
       </Navbar>
