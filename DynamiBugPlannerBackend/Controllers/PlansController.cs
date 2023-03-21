@@ -9,6 +9,7 @@ using DynamiBugPlannerBackend.Data;
 using DynamiBugPlannerBackend.Interface;
 using AutoMapper;
 using DynamiBugPlannerBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -26,6 +27,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
         
         // GET: api/Plans/5
+        [AllowAnonymous]
         [HttpGet("{id:long}", Name = "GetPlan")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,7 +53,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Plans/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")] //project owner
         [HttpPut("{id:long}", Name = "UpdatePlan")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -86,7 +88,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Plans/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")] // project owner
         [HttpDelete("{id}", Name = "DeletePlan")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

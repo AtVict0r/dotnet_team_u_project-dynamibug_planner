@@ -9,6 +9,7 @@ using DynamiBugPlannerBackend.Data;
 using DynamiBugPlannerBackend.Interface;
 using AutoMapper;
 using DynamiBugPlannerBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -26,6 +27,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Reports
+        [AllowAnonymous]
         [HttpGet(Name = "GetReports")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -44,6 +46,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Reports/5
+        [AllowAnonymous]
         [HttpGet("{id:long}", Name = "GetReport")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -69,7 +72,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Reports
-        // [Authorize]
+        [Authorize] // signed in
         [HttpPost(Name = "CreateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -101,7 +104,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Reports/5
-        // [Authorize]
+        [Authorize(Roles = "admin, manager")] //project owner, report owner
         [HttpPut("{id:long}", Name = "UpdateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -136,7 +139,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Reports/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")] // project owner
         [HttpDelete("{id}", Name = "DeleteReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

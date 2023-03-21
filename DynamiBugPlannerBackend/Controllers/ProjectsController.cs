@@ -22,6 +22,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Projects
+        [AllowAnonymous]
         [HttpGet(Name = "GetProjects")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -40,6 +41,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Projects/Archived
+        [Authorize(Roles = "admin, manager")]
         [HttpGet("Archived", Name = "GetArchirvedProjects")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -58,7 +60,8 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Projects/UnArchived
-        [HttpGet("UnArchived", Name = "GetUnArchirvedProjects")]
+        [AllowAnonymous]
+        [HttpGet("UnArchived", Name = "GetUnArchivedProjects")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUnArchirvedProjects()
@@ -76,6 +79,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Projects/Names
+        [AllowAnonymous]
         [HttpGet("Names", Name = "GetProjectNames")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -94,6 +98,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Projects/5
+        [AllowAnonymous]
         [HttpGet("{id:long}", Name = "GetProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -119,7 +124,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Projects
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin, manager")]
         [HttpPost(Name = "CreateProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -146,7 +151,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Projects/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")] //owner
         [HttpPut("{id:long}", Name = "UpdateProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -181,7 +186,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Projects/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")] //owner
         [HttpDelete("{id}", Name = "DeleteProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

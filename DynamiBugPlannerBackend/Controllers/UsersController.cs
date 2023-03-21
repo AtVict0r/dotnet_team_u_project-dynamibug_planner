@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +12,9 @@ using DynamiBugPlannerBackend.Data;
 using DynamiBugPlannerBackend.Interface;
 using AutoMapper;
 using DynamiBugPlannerBackend.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -16,17 +22,22 @@ namespace DynamiBugPlannerBackend.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsersController(IUnitOfWork unitOfWork = null!, IMapper mapper = null!)
+        public UsersController(IConfiguration config = null!, IUnitOfWork unitOfWork = null!, IMapper mapper = null!)
         {
+            _config = config;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         // GET: api/Users
+        [Authorize(Roles = "admin, manager")]        
         [HttpGet(Name = "GetUsers")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUsers()
@@ -43,16 +54,35 @@ namespace DynamiBugPlannerBackend.Controllers
             }
         }
 
-        // GET: api/Users/Admins
-        [HttpGet(Name = "GetAdmins")]
+        // GET: api/Users/User
+        [Authorize]
+        [HttpGet("User", Name = "GetCurrentUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAdmins()
+        public async Task<IActionResult> GetCurrentUser()
         {
             try
             {
-                var users = await _unitOfWork.Users.GetAll(q => q.Role != "user" || q.Role != null);
-                var results = _mapper.Map<IList<UserDTO>>(users);
+                var user = new UserIdentityDTO(User);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        // GET: api/Users/Admins
+        [AllowAnonymous]
+        [HttpGet("Admins", Name = "GetAdminsUsername")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAdminsUsername()
+        {
+            try
+            {
+                var users = await _unitOfWork.Users.GetAll(q => q.Role != "user" && q.Role != null);
+                var results = _mapper.Map<IList<AdminUsernameDTO>>(users);
                 return Ok(results);
             }
             catch (Exception ex)
@@ -62,11 +92,40 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/User/5
-        [HttpGet("{username:alpha}", Name = "GetUser")]
+        [Authorize(Roles = "admin, manager")] 
+        [HttpGet("{id:long}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUser(string username)
+        public async Task<IActionResult> GetUserById(long id)
+        {
+            try
+            {
+                var user = await _unitOfWork.Users.Get(q => q.Id == id);
+
+                if (user != null)
+                {
+                    var result = _mapper.Map<UserDTO>(user);
+                    return Ok(result);
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        // GET: api/User/John
+        [Authorize(Roles = "admin, manager")]
+        [HttpGet("{username:alpha}", Name = "GetUserByUsername")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserByUsername(string username)
         {
             try
             {
@@ -87,6 +146,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Users/Register
+        [AllowAnonymous]
         [HttpPost("Register", Name = "CreateUser")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]      
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -115,8 +175,10 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Users/Login
+        [AllowAnonymous]
         [HttpPost("Login", Name = "SignInUser")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]    
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]            
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]     
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -129,12 +191,22 @@ namespace DynamiBugPlannerBackend.Controllers
 
             try
             {
-                var user = await _unitOfWork.Users.Get(q => (q.UserName == userDTO.UserName || q.Email == userDTO.UserName) && q.Password == userDTO.Password);
+                var user = await _unitOfWork.Users.Get(q => q.UserName == userDTO.UserName || q.Email == userDTO.UserName);
 
-                if (user != null)
+                if (user == null)
+                {
+                    return NotFound(userDTO);
+                }
+
+                if (ComparePasswordValue(userDTO.Password, user.Password))
                 {
                     var result = _mapper.Map<UserDTO>(user);
-                    return Accepted(result);
+                    return Accepted("Data", new {
+                        token = CreateJwtToken(result),
+                        username = user.UserName,
+                        role = user.Role,
+                        name = user.FirstName + " " + user.LastName
+                    });
                 }
 
                 return Unauthorized(userDTO);
@@ -147,8 +219,10 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Users/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpPut("{id:long}", Name = "UpdateUser")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -162,6 +236,19 @@ namespace DynamiBugPlannerBackend.Controllers
 
             try
             {
+                // check if user is admin or account owner
+                long authorizedId = long.Parse(User.FindFirstValue(ClaimTypes.PrimarySid));
+                string authorizedRole = User.FindFirstValue(ClaimTypes.Role);
+
+                if (authorizedId != id || authorizedRole != "admin")                    
+                {
+                    return BadRequest(new {
+                        id = authorizedId,
+                        role = authorizedRole
+                    }.ToString());
+                    // return Forbid();
+                }
+
                 var user = await _unitOfWork.Users.Get(q => q.Id == id);
 
                 if (user != null)
@@ -182,8 +269,10 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Users/Role/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPut("Role/{id:long}", Name = "ManageUser")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -217,8 +306,10 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Users/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id:long}", Name = "DeleteUser")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -247,6 +338,39 @@ namespace DynamiBugPlannerBackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
+            }
+        }
+
+        private string CreateJwtToken(UserDTO userDTO)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userDTO.UserName),
+                new Claim(ClaimTypes.Role, userDTO.Role),
+                new Claim(ClaimTypes.Email, userDTO.Email!),
+                new Claim(ClaimTypes.GivenName, userDTO.FullName),
+                new Claim(ClaimTypes.PrimarySid, userDTO.Id.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetValue<string>("JwtSettings:Key")));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(Convert.ToInt32(_config.GetValue<string>("JwtSettings:Expiration"))),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        // private 
+
+        private bool ComparePasswordValue(string payloadPassword, string userPassword)
+        {
+            using(var md5 = MD5.Create())
+            {
+                byte[] passwordHash = md5.ComputeHash(Encoding.UTF8.GetBytes(payloadPassword))!;
+                return userPassword == Encoding.UTF8.GetString(passwordHash, 0, passwordHash.Length);                
             }
         }
     }

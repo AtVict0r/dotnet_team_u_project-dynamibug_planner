@@ -9,6 +9,7 @@ using DynamiBugPlannerBackend.Data;
 using DynamiBugPlannerBackend.Interface;
 using AutoMapper;
 using DynamiBugPlannerBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -26,6 +27,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // GET: api/Comments/Report/5
+        [AllowAnonymous]
         [HttpGet("Report/{id:long}", Name = "GetReportComments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,7 +53,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Comments
-        // [Authorize]
+        [Authorize] // signed in
         [HttpPost(Name = "CreateComment")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -78,7 +80,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Comments/5
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin, manager")]
         [HttpDelete("{id}", Name = "DeleteComment")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

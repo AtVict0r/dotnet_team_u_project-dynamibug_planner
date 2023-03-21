@@ -14,6 +14,7 @@ using DynamiBugPlannerBackend.Data;
 using DynamiBugPlannerBackend.Interface;
 using AutoMapper;
 using DynamiBugPlannerBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DynamiBugPlannerBackend.Controllers
 {
@@ -31,6 +32,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Emails
+        [AllowAnonymous]
         [HttpPost(Name = "PostEmail")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -61,7 +63,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
                     email.SendMail(
                         user.Email,
-                        $"{emailDTO.SenderName} sent a new message fron Dynamibug Planner",
+                        $"{emailDTO.SenderName} sent a new message from Dynamibug Planner",
                         message.ToString()
                     );
 
