@@ -8,6 +8,7 @@ namespace DynamiBugPlannerBackend.Models
     {
         public string Html { get; set; } = null!;
         public long ReportId { get; set; }
+        public long ProjectId { get; set; }
     }
 
     public class UpdateBugFixDTO
@@ -19,5 +20,6 @@ namespace DynamiBugPlannerBackend.Models
     {
         public long Id { get; set; }
         public ReportDTO Report { get; set; } = null!;
+        public ProjectDTO Project { get; set; } = null!;
     }
 }

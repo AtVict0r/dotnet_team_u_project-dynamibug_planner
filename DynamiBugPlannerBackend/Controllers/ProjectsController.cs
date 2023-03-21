@@ -151,7 +151,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Projects/5
-        [Authorize(Roles = "admin")] //owner
+        [Authorize]
         [HttpPut("{id:long}", Name = "UpdateProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -170,6 +170,13 @@ namespace DynamiBugPlannerBackend.Controllers
 
                 if (project != null)
                 {
+                    var authorizedUser = CurrentUser();
+
+                    if (authorizedUser.Id != project.UserId && authorizedUser.Role != "admin")                    
+                    {
+                        return Forbid();
+                    }
+
                     _mapper.Map(projectDTO, project);
                     _unitOfWork.Projects.Update(project);
                     await _unitOfWork.Save();
@@ -186,7 +193,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Projects/5
-        [Authorize(Roles = "admin")] //owner
+        [Authorize]
         [HttpDelete("{id}", Name = "DeleteProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -205,6 +212,13 @@ namespace DynamiBugPlannerBackend.Controllers
 
                 if (project != null)
                 {
+                    var authorizedUser = CurrentUser();
+
+                    if (authorizedUser.Id != project.UserId && authorizedUser.Role != "admin")                    
+                    {
+                        return Forbid();
+                    }
+                    
                     await _unitOfWork.Projects.Delete(id);
                     await _unitOfWork.Save();
 
@@ -217,6 +231,11 @@ namespace DynamiBugPlannerBackend.Controllers
             {
                 return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
             }
+        }
+
+        private UserIdentityDTO CurrentUser()
+        {
+            return new UserIdentityDTO(User);
         }
     }
 }

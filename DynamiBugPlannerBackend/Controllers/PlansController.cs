@@ -53,9 +53,10 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Plans/5
-        [Authorize(Roles = "admin")] //project owner
+        [Authorize]
         [HttpPut("{id:long}", Name = "UpdatePlan")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -68,18 +69,25 @@ namespace DynamiBugPlannerBackend.Controllers
 
             try
             {
-                var plan = await _unitOfWork.Plans.Get(q => q.Id == id);
+                var plan = await _unitOfWork.Plans.Get(q => q.Id == id,  new List<string> { "Project" });
 
                 if (plan != null)
                 {
+                    
+                    // check if user is admin or account owner
+                    var authorizedUser = CurrentUser();
+                    if (authorizedUser.Id != plan.Project.UserId && authorizedUser.Role != "admin")                    
+                    {
+                        return Forbid();
+                    }
+
                     _mapper.Map(planDTO, plan);
                     _unitOfWork.Plans.Update(plan);
                     await _unitOfWork.Save();
 
                     return NoContent();
                 }
-
-                return NotFound();
+                return NotFound("Plan not found");
             }
             catch (Exception ex)
             {
@@ -87,38 +95,9 @@ namespace DynamiBugPlannerBackend.Controllers
             }
         }
 
-        // DELETE: api/Plans/5
-        [Authorize(Roles = "admin")] // project owner
-        [HttpDelete("{id}", Name = "DeletePlan")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeletePlan(long id)
+        private UserIdentityDTO CurrentUser()
         {
-            if (id < 1)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                var plan = await _unitOfWork.Plans.Get(q => q.Id == id);
-
-                if (plan != null)
-                {
-                    await _unitOfWork.Plans.Delete(id);
-                    await _unitOfWork.Save();
-
-                    return NoContent();
-                }
-
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
-            }
+            return new UserIdentityDTO(User);
         }
     }
 }

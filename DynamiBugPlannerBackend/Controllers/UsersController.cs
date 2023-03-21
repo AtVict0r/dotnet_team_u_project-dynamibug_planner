@@ -63,7 +63,7 @@ namespace DynamiBugPlannerBackend.Controllers
         {
             try
             {
-                var user = new UserIdentityDTO(User);
+                var user = CurrentUser();
                 return Ok(user);
             }
             catch (Exception ex)
@@ -237,16 +237,11 @@ namespace DynamiBugPlannerBackend.Controllers
             try
             {
                 // check if user is admin or account owner
-                long authorizedId = long.Parse(User.FindFirstValue(ClaimTypes.PrimarySid));
-                string authorizedRole = User.FindFirstValue(ClaimTypes.Role);
+                var authorizedUser = CurrentUser();
 
-                if (authorizedId != id || authorizedRole != "admin")                    
+                if (authorizedUser.Id != id && authorizedUser.Role != "admin")                    
                 {
-                    return BadRequest(new {
-                        id = authorizedId,
-                        role = authorizedRole
-                    }.ToString());
-                    // return Forbid();
+                    return Forbid();
                 }
 
                 var user = await _unitOfWork.Users.Get(q => q.Id == id);
@@ -306,7 +301,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Users/5
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [HttpDelete("{id:long}", Name = "DeleteUser")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -323,6 +318,14 @@ namespace DynamiBugPlannerBackend.Controllers
 
             try
             {
+                // check if user is admin or account owner
+                var authorizedUser = CurrentUser();
+
+                if (authorizedUser.Id != id && authorizedUser.Role != "admin")                    
+                {
+                    return Forbid();
+                }
+                
                 var user = await _unitOfWork.Users.Get(q => q.Id == id);
 
                 if (user != null)
@@ -363,7 +366,10 @@ namespace DynamiBugPlannerBackend.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // private 
+        private UserIdentityDTO CurrentUser()
+        {
+            return new UserIdentityDTO(User);
+        }
 
         private bool ComparePasswordValue(string payloadPassword, string userPassword)
         {

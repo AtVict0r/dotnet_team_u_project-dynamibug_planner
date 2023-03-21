@@ -92,6 +92,7 @@ namespace DynamiBugPlannerBackend.Controllers
                     {
                         Html = "",
                         ReportId = report.Id,
+                        ProjectId = report.ProjectId,
                     });
                 await _unitOfWork.Plans.Insert(plan);
                 await _unitOfWork.Save();
@@ -104,7 +105,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // PUT: api/Reports/5
-        [Authorize(Roles = "admin, manager")] //project owner, report owner
+        [Authorize(Roles = "admin, manager")]
         [HttpPut("{id:long}", Name = "UpdateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -139,7 +140,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // DELETE: api/Reports/5
-        [Authorize(Roles = "admin")] // project owner
+        [Authorize]
         [HttpDelete("{id}", Name = "DeleteReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -154,10 +155,17 @@ namespace DynamiBugPlannerBackend.Controllers
 
             try
             {
-                var report = await _unitOfWork.Reports.Get(q => q.Id == id);
+                var report = await _unitOfWork.Reports.Get(q => q.Id == id, new List<string> { "Project" });
 
                 if (report != null)
                 {
+                    // check if user is admin or project owner
+                    var authorizedUser = CurrentUser();
+                    if (authorizedUser.Id != report.Project.UserId && authorizedUser.Role != "admin")                    
+                    {
+                        return Forbid();
+                    }
+
                     await _unitOfWork.Reports.Delete(id);
                     await _unitOfWork.Save();
 
@@ -170,6 +178,11 @@ namespace DynamiBugPlannerBackend.Controllers
             {
                 return StatusCode(500, $"Internal Sever Error. Please Try Again Later.\n{ex}");
             }
+        }
+
+        private UserIdentityDTO CurrentUser()
+        {
+            return new UserIdentityDTO(User);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace DynamiBugPlannerBackend.Controllers
         }
 
         // POST: api/Comments
-        [Authorize] // signed in
+        [Authorize]
         [HttpPost(Name = "CreateComment")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]

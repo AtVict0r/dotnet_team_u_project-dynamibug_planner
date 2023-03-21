@@ -84,7 +84,7 @@ public static class SeedData
                      LastName = lastName,
                      UserName = userName,
                      Email = $"{userName}@example.com",
-                     Password = firstName + lastName[0] + i + 1,
+                     Password = firstName + lastName[0] + i,
                  }
             );
         }
@@ -148,7 +148,8 @@ public static class SeedData
                     new BugFixModel
                     {
                         Html = $"<p>Bug Fix for report {count}<p>",
-                        ReportId = count
+                        ReportId = count,
+                        ProjectId = j
                     }
                 );
 

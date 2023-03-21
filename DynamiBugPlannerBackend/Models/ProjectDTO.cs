@@ -27,6 +27,7 @@ namespace DynamiBugPlannerBackend.Models
     public class ProjectDTO : UpdateProjectDTO
     {
         public long Id { get; set; }
+        public long UserId { get; set; }
         public UserDTO User { get; set; } = null!;
         public virtual IList<ReportDTO>? Reports { get; set; }
         // public GithubRepositoryDTO Repository { get; set; }
