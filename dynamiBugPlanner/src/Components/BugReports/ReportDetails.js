@@ -13,28 +13,31 @@ function useSessionStorage(key, defaultValue = "") {
   return [state, setState];
 }
 
-export default function ReportDetails({ api, user }) {
-  sessionStorage.removeItem("navSearchBar");
-  let reportDetailId = window.location.search;
-  if (reportDetailId === null || reportDetailId === "") {
+export default function ReportDetails({ api, userId, userRole }) {
+  const [query] = useState(window.location.search);
+  const [reportDetailId] = useState(
+    query === null || query === "" ? null : Number(query.substring(1))
+  );
+
+  if (reportDetailId === null || isNaN(reportDetailId)) {
     window.location.href = "/Browse";
   } else {
-    reportDetailId = Number(reportDetailId.substring(1));
-    if (isNaN(reportDetailId)) {
-      window.location.href = "/Browse";
-    } else {
-      return (
-        <div className="container">
-          <h3>Report Detail</h3>
-          <a href="/Browse">Back to list</a>
-          <DisplayReport id={reportDetailId} api={api} user={user} />
-        </div>
-      );
-    }
+    return (
+      <div className="container">
+        <h3>Report Detail</h3>
+        <a href="/Browse">Back to list</a>
+        <DisplayReport
+          id={reportDetailId}
+          api={api}
+          userId={userId}
+          userRole={userRole}
+        />
+      </div>
+    );
   }
 }
 
-function DisplayReport({ id, api, user }) {
+function DisplayReport({ id, api, userId, userRole }) {
   const [reportDetail, setReportDetail] = useSessionStorage("reportDetail", {
     id: 0,
     type: "",
@@ -59,7 +62,7 @@ function DisplayReport({ id, api, user }) {
 
   const postComment = async () => {
     let result = await api.createComment({
-      userId: Number(user.id),
+      userId: Number(userId),
       comment: newComment,
       reportId: Number(reportDetail.id),
       createDate: new Date().toISOString(),
@@ -104,7 +107,11 @@ function DisplayReport({ id, api, user }) {
   if (reportDetail !== "") {
     return (
       <div className="container RDcontainer">
-        <a href={`/EditReport?${reportDetail.id}`}>Edit Report</a>
+        {userRole !== "admin" && userRole !== "manager" ? (
+          <></>
+        ) : (
+          <a href={`/EditReport?${reportDetail.id}`}>Edit Report</a>
+        )}
         <div className="row RDrow">
           <label className="RDlabel col-15">Id: </label>{" "}
           <input
@@ -195,15 +202,24 @@ function DisplayReport({ id, api, user }) {
         >
           Plan
         </a>
-        <button onClick={deleteReport} className="btn btn-primary RDbutton">
-          Delete Report
-        </button>
-        <input
-          type="button"
-          className="btn btn-primary RDbutton"
-          onClick={toggleAddComment}
-          value="Add Comment"
-        />
+        {userRole !== "admin" && userId !== reportDetail.project.userId ? (
+          <></>
+        ) : (
+          <button onClick={deleteReport} className="btn btn-primary RDbutton">
+            Delete Report
+          </button>
+        )}
+
+        {userRole === "" ? (
+          <></>
+        ) : (
+          <input
+            type="button"
+            className="btn btn-primary RDbutton"
+            onClick={toggleAddComment}
+            value="Add Comment"
+          />
+        )}
         <div
           style={{ marginTop: "1rem", display: addComment ? "none" : "block" }}
         >
@@ -236,16 +252,28 @@ function DisplayReport({ id, api, user }) {
             />
           </form>
         </div>
-        <div style={{ marginTop: "1rem", }}>
+        <div style={{ marginTop: "1rem" }}>
           <h4>Comments</h4>
-          <GetComments api={api} reportId={reportDetail.id} commentLength={endLength}/>
-          <div style={{display: "flex", justifyContent: "center", width: "75%"}}>
-          {(endLength + 5 < reportDetail.comments.length)? 
-          <input type="button" value="Load More" onClick={() => setEndLength(endLength + 5)}/>
-          :
-          <></>}
+          <GetComments
+            api={api}
+            reportId={reportDetail.id}
+            commentLength={endLength}
+            userRole={userRole}
+          />
+          <div
+            style={{ display: "flex", justifyContent: "center", width: "75%" }}
+          >
+            {endLength + 5 < reportDetail.comments.length ? (
+              <input
+                type="button"
+                value="Load More"
+                onClick={() => setEndLength(endLength + 5)}
+              />
+            ) : (
+              <></>
+            )}
           </div>
-          </div>
+        </div>
       </div>
     );
   }

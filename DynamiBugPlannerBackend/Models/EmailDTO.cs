@@ -8,10 +8,10 @@ namespace DynamiBugPlannerBackend.Models
 
         public string SenderEmail { get; set; } = null!;
 
+        public string AdminUserName { get; set; } = null!;
+
         public string MessageTitle { get; set; } = null!;
         
         public string MessageBody { get; set; } = null!;
-
-        public string UserName { get; set; } = null!;
     }
 }

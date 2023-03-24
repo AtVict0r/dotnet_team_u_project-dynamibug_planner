@@ -27,13 +27,13 @@ function ListProjects({api}) {
 
   useEffect(() => {
     const fetchData = async () => {
-      let result = await api.getProjects();
+      let result = await api.getUnArchivedProjects();
       result.json().then((json) => {
         setProjects(json);
       });
     };
     fetchData();
-  }, []);
+  }, [api]);
 
   if (projects !== null) {
     return projects.sort((a, b) => {return a.name.localeCompare(b.name)}).map((project) => {
@@ -49,14 +49,13 @@ function ListProjects({api}) {
   }
 }
 
-export default function AdminProjects({api}) {
-  sessionStorage.removeItem('navSearchBar');
+export default function AdminProjects({api, userRole}) {
   return (
     <div className="container">
       <h1>Projects</h1>
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
         <a href="/Browse">Go to Reports</a>
-        <a href="NewProject" className="btn btn-primary">Add Project</a>
+        {(userRole !== "admin" && userRole !== "manager")? <></> : <a href="NewProject" className="btn btn-primary">Add Project</a>}
       </div>
       <Row>
         <ListProjects api={api} />

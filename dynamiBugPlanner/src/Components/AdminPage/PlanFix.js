@@ -1,11 +1,17 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
-export default function PlanFix({ api }) {
+export default function PlanFix({ api, userId, userRole }) {
+  const [reportDetail] = useState(JSON.parse(window.sessionStorage.getItem('reportDetail')))
   const [reportId] = useState(
-    Number(sessionStorage.getItem("reportDetail").id) || Number(window.location.search.substring(1))
+    reportDetail.id || Number(window.location.search.substring(1))
   );
-  let canvas;
+  const [projectOwner] = useState(reportDetail.project.userId);
+  const canvas = useRef();
+  const [canvasWidth, setCanvasWidth] = useState();
+  const [canvasHeight, setCanvasHeight] = useState();
+  const [canvasTop, setCanvasTop] = useState();
+  const [canvasLeft, setCanvasLeft] = useState();
   const [context, setContext] = useState();
   const [currentTool, setCurrentTool] = useState("DrawTool");
   const [isDrawing, setIsDrawing] = useState(false);
@@ -13,10 +19,13 @@ export default function PlanFix({ api }) {
   const [eventPosition, setEventPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    canvas = document.getElementById("whiteboard");
-    setContext(canvas.getContext("2d"));
+    setContext(canvas.current.getContext("2d"));
+    setCanvasWidth(canvas.current.width);
+    setCanvasHeight(canvas.current.height);
+    setCanvasTop(canvas.current.getBoundingClientRect().top);
+    setCanvasLeft(canvas.current.getBoundingClientRect().left);
   });
-  
+
   const fetchData = async () => {
     let result = await api.getPlan(reportId);
     result
@@ -35,13 +44,13 @@ export default function PlanFix({ api }) {
     let image = new Image()
     image.src = imageData;
     image.onload = () => {
-      if (typeof imageData !== "undefined" && imageData != "") {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+      if (typeof imageData !== "undefined" && imageData !== "") {
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
         context.drawImage(image, 0, 0);
       } else {
         console.log("imageData is empty");
       }
-    }    
+    }
   };
 
   const handleMouseDown = (event) => {
@@ -51,14 +60,14 @@ export default function PlanFix({ api }) {
         context.strokeStyle = "black";
         context.lineWidth = 3;
         context.moveTo(
-          event.clientX - canvas.getBoundingClientRect().left,
-          event.clientY - canvas.getBoundingClientRect().top
+          event.clientX - canvasLeft,
+          event.clientY - canvasTop
         );
         break;
       }
       case "EraseTool":
       case "DrawTool": {
-        setIsDrawing(true);        
+        setIsDrawing(true);
         context.beginPath();
         context.strokeStyle = currentTool === "EraseTool" ? "white" : "black";
         context.lineWidth = currentTool === "EraseTool" ? 13 : 3;
@@ -66,10 +75,11 @@ export default function PlanFix({ api }) {
       }
       case "TextTool": {
         setEventPosition({
-          x: event.clientX - canvas.getBoundingClientRect().left,
-          y: event.clientY - canvas.getBoundingClientRect().top,
+          x: event.clientX - canvasLeft,
+          y: event.clientY - canvasTop,
         });
-        const textBox = document.getElementById("TextTool");
+        console.log("Text tool:", currentTool);
+        const textBox = document.getElementById(currentTool);
         textBox.hidden = false;
         textBox.style.left = event.clientX + "px";
         textBox.style.top = event.clientY + "px";
@@ -85,8 +95,8 @@ export default function PlanFix({ api }) {
           image.onload = () => {
             context.drawImage(
               image,
-              event.clientX - canvas.getBoundingClientRect().left,
-              event.clientY - canvas.getBoundingClientRect().top,
+              event.clientX - canvasLeft,
+              event.clientY - canvasTop,
               100,
               100
             );
@@ -103,8 +113,8 @@ export default function PlanFix({ api }) {
       case "EraseTool":
       case "DrawTool": {
         context.lineTo(
-          event.clientX - canvas.getBoundingClientRect().left,
-          event.clientY - canvas.getBoundingClientRect().top
+          event.clientX - canvasLeft,
+          event.clientY - canvasTop
         );
         context.stroke();
         break;
@@ -116,8 +126,8 @@ export default function PlanFix({ api }) {
     switch (currentTool) {
       case "LineTool": {
         context.lineTo(
-          event.clientX - canvas.getBoundingClientRect().left,
-          event.clientY - canvas.getBoundingClientRect().top
+          event.clientX - canvasLeft,
+          event.clientY - canvasTop
         );
         context.stroke();
         break;
@@ -127,16 +137,16 @@ export default function PlanFix({ api }) {
         setIsDrawing(false);
         break;
       }
-      // case "TextTool": {
-      //   const textBox = document.getElementById("TextTool");
-      //   textBox.focus();
-      //   break;
-      // }
+      case "TextTool": {
+        const textBox = document.getElementById(currentTool);
+        textBox.focus();
+        break;
+      }
     }
   };
 
-  const addText = (txt) => {
-    const textBox = document.getElementById("TextTool");
+  const addText = (tagId, txt) => {
+    const textBox = document.getElementById(tagId);
     textBox.value = "";
     textBox.hidden = true;
     context.textBaseline = "top";
@@ -161,7 +171,7 @@ export default function PlanFix({ api }) {
           type="button"
           className="btn btn-outline-primary rounded-pill"
           value="Save"
-          onClick={() => putData(canvas.toDataURL())}
+          onClick={() => putData(canvas.current.toDataURL())}
         />
       </li>
       <li>
@@ -170,7 +180,7 @@ export default function PlanFix({ api }) {
           className="btn btn-outline-primary rounded-pill"
           value="Clear"
           onClick={() => {
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.clearRect(0, 0, canvasWidth, canvasHeight);
           }}
         />
       </li>
@@ -200,6 +210,7 @@ export default function PlanFix({ api }) {
           className="btn btn-outline-primary rounded-pill"
           value="Text Tool"
           onClick={() => {
+            console.log("selecting text tool");
             setCurrentTool("TextTool");
           }}
         />
@@ -226,11 +237,11 @@ export default function PlanFix({ api }) {
           }}
           hidden
         />
-        <input 
-        type="button" 
-        className="btn btn-outline-primary rounded-pill"
-        value="Image Tool" 
-        onClick={() => document.getElementById("addImage").click()}/>
+        <input
+          type="button"
+          className="btn btn-outline-primary rounded-pill"
+          value="Image Tool"
+          onClick={() => document.getElementById("addImage").click()} />
       </li>
     </ul>
   );
@@ -239,9 +250,15 @@ export default function PlanFix({ api }) {
     <div className="container">
       <h1>Plan Fix</h1>
       <a href={`/Report?${reportId}`}>Back to Report</a>
-      {planControls}
+      {
+        (userRole !== "admin" && userId !== projectOwner) ?
+          <br />
+          :
+          planControls
+      }
       <canvas
         id="whiteboard"
+        ref={canvas}
         width="900"
         height="500"
         onMouseDown={handleMouseDown}
@@ -257,7 +274,7 @@ export default function PlanFix({ api }) {
           resize: "both",
           position: "absolute",
         }}
-        onBlur={(e) => addText(e.target.value)}
+        onBlur={(e) => {console.log("Add text:", e.target.id); addText(e.target.id, e.target.value);}}
         hidden
       ></textarea>
     </div>

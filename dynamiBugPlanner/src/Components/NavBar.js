@@ -29,8 +29,7 @@ function BrandLogo() {
  * and logout links.
  */
 function UserLogin({user}) {
-  
-  if (user !== null) {
+  if (typeof user !== 'undefined' && user !== null) {
     return (
       <Nav className="me-auto">
         <Nav.Link href="/Profile">{user.userName}</Nav.Link>
@@ -54,7 +53,7 @@ function UserLogin({user}) {
  * BrandLogo component, a Navbar.Toggle component, and a Navbar.Collapse component inside of it. The
  * Navbar.Collapse component has a SearchComponent component and a UserLogin component inside of it.
  */
-export default function NavBar({user, setUser}) {
+export default function NavBar({user}) {
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -62,8 +61,8 @@ export default function NavBar({user, setUser}) {
           <BrandLogo />
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <SearchBar showSearchBar={(useLocation().pathname == "/")}/>
-          {(typeof user != 'undefined')? <UserLogin user={user} setUser={setUser}/> : <></>}
+            <SearchBar showSearchBar={(useLocation().pathname === '/')}/>
+            <UserLogin user={user}/> 
           </Navbar.Collapse>
         </Container>
       </Navbar>

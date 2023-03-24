@@ -56,6 +56,7 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize]
         [HttpPost(Name = "CreateComment")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateComment([FromBody] CreateCommentDTO commentDTO)
@@ -82,7 +83,9 @@ namespace DynamiBugPlannerBackend.Controllers
         // DELETE: api/Comments/5
         [Authorize(Roles = "admin, manager")]
         [HttpDelete("{id}", Name = "DeleteComment")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Captcha from "../../CustomCaptcha";
 
-export default function AddProject({api, user}) {
+export default function AddProject({api, userId, invalidToken}) {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
 
+  useEffect(() => {
+    if (window.sessionStorage.getItem('user') == null || invalidToken) {
+      window.location.href = '/Projects';
+    }
+  }, [invalidToken]);
+
   const postData = async () => {
     let result = await api.createProject({
-      userId: user.id,
+      userId: userId,
       name: projectName,
       description: projectDescription,
       githubId: 0,

@@ -47,7 +47,7 @@ namespace DynamiBugPlannerBackend.Controllers
 
             try
             {
-                var user = await _unitOfWork.Users.Get(q => q.UserName == emailDTO.UserName);
+                var user = await _unitOfWork.Users.Get(q => q.UserName == emailDTO.AdminUserName);
 
                 if (user != null)
                 {

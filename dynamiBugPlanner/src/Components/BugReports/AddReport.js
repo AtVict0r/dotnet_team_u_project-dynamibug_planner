@@ -2,14 +2,14 @@ import "./AddReport.css";
 import React, { useEffect, useState } from "react";
 import Captcha from "../CustomCaptcha";
 
-export default function AddReport({ api, user }) {
+export default function AddReport({ api, userId, invalidToken }) {
   const [listProject, setListProject] = useState([]);
   const [projectId, setProjectId] = useState("");
   const [reportType, setReportType] = useState("Bug");
   const [reportTitle, setReportTitle] = useState("");
   const [reportDescription, setReportDescription] = useState("");
 
-  let listProjects = () => {
+  const listProjects = () => {
     return listProject.map((projectName) => {
       return (
         <option key={projectName.id} value={projectName.id}>
@@ -27,12 +27,18 @@ export default function AddReport({ api, user }) {
         .then((json) => setListProject(json))
         .catch((err) => console.log(err.message));
     };
-    fetchData();
-  }, []);
+
+    if (window.sessionStorage.getItem('user') == null || invalidToken) {
+      window.location.href = '/login';
+    }
+    else{
+      fetchData();
+    }
+  }, [api, invalidToken]);
 
   const postData = async () => {
     let result = await api.createReport({
-      userId: Number(user.id),
+      userId: Number(userId),
       type: reportType,
       title: reportTitle,
       description: reportDescription,
@@ -44,7 +50,6 @@ export default function AddReport({ api, user }) {
       .then((data) => window.location.href = `/Report?${data.id}`)
       .catch((err) => {
         console.log(err.message)
-        alert("Failed! Try Again!");
         document.getElementById("userIsHuman").checked = false;
       });
   }
@@ -60,7 +65,7 @@ export default function AddReport({ api, user }) {
   };
 
   return (
-    <form className="ARcontainer container" onSubmit={(e) => {e.preventDefault(); postData()}}>
+    <form className="ARcontainer container" onSubmit={(e) => {e.preventDefault(); postData();}}>
       <div>
         <div className="row">
           <label className="ARlabel" htmlFor="projectId">
@@ -79,7 +84,7 @@ export default function AddReport({ api, user }) {
             required
           >
             <option value=""></option>
-            {listProjects(listProject)}
+            {listProjects()}
           </select>
         </div>
         <div className="row">

@@ -5,9 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DynamiBugPlannerBackend.Data
 {
     public class BugFixModel
-    {
-        private long projectId;
-        
+    {        
         [Key]
         public long Id { get; set; }
 

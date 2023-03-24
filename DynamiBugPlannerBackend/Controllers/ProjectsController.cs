@@ -43,6 +43,8 @@ namespace DynamiBugPlannerBackend.Controllers
         // GET: api/Projects/Archived
         [Authorize(Roles = "admin, manager")]
         [HttpGet("Archived", Name = "GetArchirvedProjects")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetArchirvedProjects()
@@ -127,6 +129,8 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize(Roles = "admin, manager")]
         [HttpPost(Name = "CreateProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectDTO projectDTO)
@@ -154,6 +158,8 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize]
         [HttpPut("{id:long}", Name = "UpdateProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -196,6 +202,8 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize]
         [HttpDelete("{id}", Name = "DeleteProject")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

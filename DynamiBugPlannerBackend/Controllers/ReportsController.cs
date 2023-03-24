@@ -75,6 +75,7 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize] // signed in
         [HttpPost(Name = "CreateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateReport([FromBody] CreateReportDTO reportDTO)
@@ -108,6 +109,8 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize(Roles = "admin, manager")]
         [HttpPut("{id:long}", Name = "UpdateReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -143,6 +146,8 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize]
         [HttpDelete("{id}", Name = "DeleteReport")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

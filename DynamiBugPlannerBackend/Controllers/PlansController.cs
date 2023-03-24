@@ -55,7 +55,8 @@ namespace DynamiBugPlannerBackend.Controllers
         // PUT: api/Plans/5
         [Authorize]
         [HttpPut("{id:long}", Name = "UpdatePlan")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]  
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]              
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

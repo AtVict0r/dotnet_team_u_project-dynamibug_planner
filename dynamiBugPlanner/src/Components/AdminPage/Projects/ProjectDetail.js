@@ -11,26 +11,28 @@ function useSessionStorage(key, defaultValue = "") {
   return [state, setState];
 }
 
-export default function ProjectDetail({ api }) {
-  sessionStorage.removeItem("navSearchBar");
-  let projectDetailId = window.location.search;
-  if (projectDetailId === null || projectDetailId === "") {
+export default function ProjectDetail({ api, userId, userRole }) {
+  const [query] = useState(window.location.search);
+  const [projectDetailId] = useState(
+    query === null || query === "" ? null : Number(query.substring(1))
+  );
+  if (projectDetailId === null || isNaN(projectDetailId)) {
     window.location.href = "/Projects";
   } else {
-    projectDetailId = Number(projectDetailId.substring(1));
-    if (isNaN(projectDetailId)) {
-      window.location.href = "/Projects";
-    } else {
-      return (
-        <div className="container">
-          <h4>Project Detail</h4>
-          <a href="/Projects">Go to Projects</a>
-          <br />
-          <a href="/Browse">Go to Reports</a>
-          <DisplayProject api={api} id={projectDetailId} />
-        </div>
-      );
-    }
+    return (
+      <div className="container">
+        <h4>Project Detail</h4>
+        <a href="/Projects">Go to Projects</a>
+        <br />
+        <a href="/Browse">Go to Reports</a>
+        <DisplayProject
+          api={api}
+          id={projectDetailId}
+          userId={userId}
+          userRole={userRole}
+        />
+      </div>
+    );
   }
 }
 
@@ -38,7 +40,7 @@ function ShowReportsList({ reports }) {
   const [startLength, setStartLength] = useState(0);
 
   useEffect(() => {
-    if(reports.length < startLength){
+    if (reports.length < startLength) {
       setStartLength(0);
     }
     const nextButton = document.getElementById("reportsNextButton");
@@ -121,7 +123,7 @@ function ShowReportsList({ reports }) {
   }
 }
 
-function DisplayProject({ api, id }) {
+function DisplayProject({ api, id, userId, userRole }) {
   const [projectDetail, setProjectDetail] = useSessionStorage("projectDetail", {
     isArchived: false,
     id: 0,
@@ -162,19 +164,24 @@ function DisplayProject({ api, id }) {
   return (
     <div className="container">
       <div className="row" style={{ marginTop: "1rem" }}>
-        {projectDetail.isArchived ? (
-          <h5>Archived</h5>
+        {userRole !== "admin" && userId !== projectDetail.userId ? (
+          <></>
         ) : (
-          <a
-            className="btn btn-primary RDbutton"
-            href={`/EditProject?${projectDetail.id}`}
-          >
-            Edit Project
-          </a>
+          <div className="row">
+            <a
+              className="btn btn-primary RDbutton"
+              href={`/EditProject?${projectDetail.id}`}
+            >
+              Edit Project
+            </a>
+            <button
+              onClick={deleteProject}
+              className="btn btn-primary RDbutton"
+            >
+              Delete Project
+            </button>
+          </div>
         )}
-        <button onClick={deleteProject} className="btn btn-primary RDbutton">
-          Delete Project
-        </button>
         <div className="row" style={{ marginTop: "1rem" }}>
           <label className="RDlabel col-15" htmlFor="projectId">
             Id:{" "}

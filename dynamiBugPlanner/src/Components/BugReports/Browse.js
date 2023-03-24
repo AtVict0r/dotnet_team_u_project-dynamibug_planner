@@ -19,7 +19,13 @@ function ReportTable({ api }) {
   const [reportPriority, setReportPriority] = useState("");
   const [reports, setReports] = useState([]);
   const [listProject, setListProject] = useState([]);
-  const [reportTitle] = useState(window.sessionStorage.getItem("navSearchBar"));
+  const [reportTitle] = useState(() => {
+    const query = window.location.search.substring(1);
+    if(query.includes("Title=")){
+      return query.substring(query.indexOf('=')+1);
+    }
+    return "";
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +46,7 @@ function ReportTable({ api }) {
         .catch((err) => console.log(err.message));
     };
     fetchData();
-  }, []);
+  }, [api]);
 
   let filteredReports = reports;
   if (reportTitle !== null && reportTitle !== "") {

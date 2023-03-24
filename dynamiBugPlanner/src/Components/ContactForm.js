@@ -2,14 +2,43 @@ import "./ContactForm.css";
 import React, { useState, useEffect } from "react";
 import Captcha from "./CustomCaptcha";
 
-export default function ContactForm({user}) {
-    sessionStorage.removeItem('navSearchBar');
-    // lazy useState initializer
-    const [senderName, setSenderName] = useState(user.name);
-    const [senderEmail, setSenderEmail] = useState(user.email);
-    const [receiverEmail, setReceiverEmail] = useState("");
+export default function ContactForm({ api, userName, userEmail }) {
+    const [senderName, setSenderName] = useState("");
+    const [senderEmail, setSenderEmail] = useState("");
+    const [receiverUsername, setReceiverUsername] = useState("");
     const [messageTitle, setMessageTitle] = useState("");
     const [messageBody, setMessageBody] = useState("");
+    const [adminUsernames, setAdminUsernames] = useState([]);
+
+    useEffect(() => {
+        setSenderName(userName);
+        setSenderEmail(userEmail);
+
+        const fetchData = async () => {
+            let result = await api.getAdminsUsername();
+            result
+                .json()
+                .then((json) => setAdminUsernames(json))
+                .catch((err) => console.log(err.message));
+        };
+        fetchData();
+    }, [api, userName, userEmail])
+
+    const postData = async () => {
+        let result = await api.postEmail({
+            senderName: senderName,
+            senderEmail: senderEmail,
+            adminUserName: receiverUsername,
+            messageTitle: messageTitle,
+            messageBody: messageBody
+        });
+        result
+            .json()
+            .catch((err) => {
+                console.log(err.message)
+                document.getElementById("userIsHuman").checked = false;
+            });
+    }
 
     const handleChange = (tagId) => {
         const list = document.getElementById(tagId).classList;
@@ -21,8 +50,20 @@ export default function ContactForm({user}) {
         list.add("inputWarning");
     };
 
+    const listAdminUsernames = () => {
+        let count = 0;
+        return adminUsernames.map((admin) => {
+            count += 1;
+            return (
+                <option key={count} value={admin.userName}>
+                    {admin.fullName}
+                </option>
+            );
+        });
+    }
+
     return (
-        <form className="container CFcontainer" onSubmit={(e) => { e.preventDefault(); window.location.href = "/"}}>
+        <form className="container CFcontainer" onSubmit={(e) => { e.preventDefault(); postData(); window.location.href = '/'}}>
             <div className="row">
                 <label className="CFlabel" htmlFor="senderName">
                     Name:{" "}
@@ -35,7 +76,7 @@ export default function ContactForm({user}) {
                         setSenderName(event.target.value);
                         handleChange(event.target.id);
                     }}
-                    onInvalid={(event) => handleInvalid(event.target.id) }
+                    onInvalid={(event) => handleInvalid(event.target.id)}
                     type="text"
                     required
                 />
@@ -52,27 +93,29 @@ export default function ContactForm({user}) {
                         setSenderEmail(event.target.value);
                         handleChange(event.target.id);
                     }}
-                    onInvalid={(event) => handleInvalid(event.target.id) }
+                    onInvalid={(event) => handleInvalid(event.target.id)}
                     type="email"
                     required
                 />
             </div>
             <div className="row">
-                <label className="CFlabel" htmlFor="receiverEmail">
+                <label className="CFlabel" htmlFor="receiverUsername">
                     Recipient:{" "}
                 </label>
-                <input
-                    id="receiverEmail"
+                <select
+                    id="receiverUsername"
                     className="CFinput"
-                    value={receiverEmail}
+                    value={receiverUsername}
                     onChange={(event) => {
-                        setReceiverEmail(event.target.value);
+                        setReceiverUsername(event.target.value);
                         handleChange(event.target.id);
                     }}
-                    onInvalid={(event) => handleInvalid(event.target.id) }
-                    type="text"
+                    onInvalid={(event) => { handleInvalid(event.target.id) }}
                     required
-                />
+                >
+                    <option value=""></option>
+                    {listAdminUsernames()}
+                </select>
             </div>
             <div className="row">
                 <label className="CFlabel" htmlFor="messageTitle">
@@ -86,7 +129,7 @@ export default function ContactForm({user}) {
                         setMessageTitle(event.target.value);
                         handleChange(event.target.id);
                     }}
-                    onInvalid={(event) => handleInvalid(event.target.id) }
+                    onInvalid={(event) => handleInvalid(event.target.id)}
                     type="text"
                     required
                 />
@@ -105,7 +148,7 @@ export default function ContactForm({user}) {
                         setMessageBody(event.target.value);
                         handleChange(event.target.id);
                     }}
-                    onInvalid={(event) => handleInvalid(event.target.id) }
+                    onInvalid={(event) => handleInvalid(event.target.id)}
                     required
                 />
             </div>
@@ -115,15 +158,4 @@ export default function ContactForm({user}) {
             </div>
         </form>
     );
-}
-
-// user defined hooks
-function useLocalStorage(key, defaultValue = "") {
-    const [state, setState] = useState(() => {
-        return window.localStorage.getItem(key) || defaultValue;
-    });
-    useEffect(() => {
-        window.localStorage.setItem(key, state);
-    }, [key, state]);
-    return [state, setState];
 }

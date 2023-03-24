@@ -1,56 +1,100 @@
 import React, { useState, useEffect } from "react";
-import Captcha from "../CustomCaptcha";
 
-// window.location.href = '/';
+export default function Profile({ api, user, invalidToken }) {
+    const [id, setId] = useState(0);
+    const [fullname, setFullName] = useState("");
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [role, setRole] = useState("");
 
-export default function Profile({api}) {
-    const [userName, setUserName] = useState("");
-    const [userPassword, setUserPassword] = useState("");
+    useEffect(() => {
+        if (window.sessionStorage.getItem('user') == null || invalidToken) {
+            window.location.href = '/login';
+        }
 
-    const postData = async () => {
-        let result = await api.signInUser({
-          username: userName,
-          password: userPassword,
-        });
+        if (user !== null) {
+            setId(user.id);
+            setFullName(user.fullName);
+            setUsername(user.userName);
+            setEmail(user.email);
+            setRole(user.role)
+        }
+    }, [user, invalidToken])
+
+    const deleteCurrentUser = async () => {
+        let result = await api.deleteUser(id);
         result
-          .json()
-          .then((data) => { sessionStorage.setItem('user', JSON.stringify(data)); window.history.back(); })
-          .catch((err) => {
-            console.log(err.message);
-            document.getElementById("userIsHuman").checked = false;
-          });
-    }
+            .json()
+            .then(window.location.reload())
+            .catch((err) => console.log(err.message));
+    };
 
     return (
-        <form className="container CFcontainer" onSubmit={(e) => { e.preventDefault(); postData(); }}>
-            <div className="row">
-                <label className="CFlabel" htmlFor="userName">
-                    UserName:{" "}
+        <div className="container">
+            <h1>User Account</h1>
+            <a
+                className="btn btn-primary"
+                href='/EditProfile'
+            >
+                Edit User
+            </a>
+            <div className="row" style={{ marginTop: "1rem" }}>
+                <label className="CFlabel" htmlFor="fullname">
+                    Full Name:{" "}
                 </label>
                 <input
-                    id="userName"
+                    id="fullname"
                     className="CFinput"
+                    value={fullname}
                     type="text"
-                    onChange={(event) => setUserName(event.target.value)}
-                    required
+                    readOnly
                 />
             </div>
             <div className="row">
-                <label className="CFlabel" htmlFor="userPassword">
-                    Password:{" "}
+                <label className="CFlabel" htmlFor="username">
+                    User Name:{" "}
                 </label>
                 <input
-                    id="userPassword"
+                    id="username"
                     className="CFinput"
+                    value={username}
                     type="text"
-                    onChange={(event) => setUserPassword(event.target.value)}
-                    required
+                    readOnly
                 />
             </div>
-            <Captcha />
             <div className="row">
-                <input className="CFbutton CFinput btn btn-primary" type="submit" value="Login" />
+                <label className="CFlabel" htmlFor="email">
+                    Email:{" "}
+                </label>
+                <input
+                    id="email"
+                    className="CFinput"
+                    value={email}
+                    type="email"
+                    readOnly
+                />
             </div>
-        </form>
+            <div className="row">
+                <label className="CFlabel" htmlFor="role">
+                    Role:{" "}
+                </label>
+                <input
+                    id="role"
+                    className="CFinput"
+                    value={role.toUpperCase()}
+                    type="text"
+                    readOnly
+                />
+            </div>
+            <input
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                    if (window.confirm("Are you sure you want to delete this user?") === true)
+                        deleteCurrentUser();
+                }}
+                value="Delete User"
+            />
+        </div>
     );
 }

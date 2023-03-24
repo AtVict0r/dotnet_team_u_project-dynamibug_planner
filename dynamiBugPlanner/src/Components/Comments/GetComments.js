@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../Comments/GetComments.css";
 
-export default function GetComments({ api, reportId, commentLength }) {
+export default function GetComments({ api, reportId, commentLength, userRole }) {
   const [userComments, setUserComments] = useState([]);
 
   useEffect(() => {
@@ -56,15 +56,20 @@ export default function GetComments({ api, reportId, commentLength }) {
               readOnly
             />
           </div>
-          <button
-            style={{ marginBottom: "1rem" }}
-            onClick={(event) => {
-              deleteComment(userComment.id);
-            }}
-            className="btn btn-primary"
-          >
-            Delete Comment
-          </button>
+          {
+            (userRole !== "admin" && userRole !== "manager")? 
+            <br /> 
+            :
+            <button
+              style={{ marginBottom: "1rem" }}
+              onClick={(event) => {
+                deleteComment(userComment.id);
+              }}
+              className="btn btn-primary"
+            >
+              Delete Comment
+            </button>
+          }
         </div>
       );
     });

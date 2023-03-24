@@ -1,22 +1,18 @@
 import { FormControl } from "react-bootstrap";
 import Stack from "react-bootstrap/Stack";
-import React, { useEffect, useState } from "react";
-
-function useSessionStorage(key, defaultValue = "") {
-  const [state, setState] = useState(() => {
-      return window.sessionStorage.getItem(key) || defaultValue;
-  });
-  useEffect(() => {
-      window.sessionStorage.setItem(key, state);
-  }, [key, state]);
-  return [state, setState];
-}
+import React, { useState } from "react";
 
 /**
  * It returns a Stack component with a Form.Control and a Button component inside of it.
  */
 export default function SearchBar({showSearchBar}) {
-  const [navSearchBar, setNavSearchBar] = useSessionStorage("navSearchBar");
+  const [navSearchBar, setNavSearchBar] = useState(() => {
+    const query = window.location.search.substring(1);
+    if(query.includes("Title=")){
+      return query.substring(query.indexOf('=')+1);
+    }
+    return "";
+  });
 
   return (
     <Stack
@@ -33,13 +29,13 @@ export default function SearchBar({showSearchBar}) {
         onChange={(event) => {
           setNavSearchBar(event.target.value);
       }}
-      onKeyUp={(event) => {
-        if(navSearchBar === ""){
-          window.location.reload();
+      onKeyUp={() => {
+        if(navSearchBar === "" && window.location.pathname.includes('Browse')){
+          window.location.href = '/Browse';
         }
       }}
       />
-      <a className="btn btn-secondary" href={`/Browse?${navSearchBar}`}>Submit</a>
+      <a className="btn btn-secondary" href={`/Browse?Title=${navSearchBar}`}>Submit</a>
     </Stack>
   );
   }

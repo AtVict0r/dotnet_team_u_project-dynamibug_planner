@@ -25,6 +25,7 @@ namespace DynamiBugPlannerBackend.Configurations
             CreateMap<UserModel, AdminUsernameDTO>().ReverseMap();
             CreateMap<UserModel, ManageUserDTO>().ReverseMap();
             CreateMap<UserModel, UpdateUserDTO>().ReverseMap();
+            CreateMap<UserModel, UserIdentityDTO>().ReverseMap();
         }
     }
 }

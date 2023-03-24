@@ -20,6 +20,7 @@ namespace DynamiBugPlannerBackend.Data
         public string Email { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
+        public string FullName => this.FirstName + " " + this.LastName;
         public string Password 
         { 
             get
@@ -37,5 +38,6 @@ namespace DynamiBugPlannerBackend.Data
                 }
             } 
         }
+        public DateTime Expiration { get; set; } = DateTime.Now!;
     }
 }

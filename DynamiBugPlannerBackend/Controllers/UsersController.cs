@@ -58,13 +58,24 @@ namespace DynamiBugPlannerBackend.Controllers
         [Authorize]
         [HttpGet("User", Name = "GetCurrentUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCurrentUser()
         {
             try
             {
-                var user = CurrentUser();
-                return Ok(user);
+                long id = CurrentUser().Id!;
+                var result = await _unitOfWork.Users.Get(q => q.Id == id);
+                if(result != null)
+                {
+                    result.Expiration = DateTime.Now.AddMinutes(Convert.ToInt32(_config.GetValue<string>("JwtSettings:Expiration")));
+                    return Ok(new{
+                        token = CreateJwtToken(_mapper.Map<UserDTO>(result)),
+                        user = _mapper.Map<UserIdentityDTO>(result)
+                    });
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -165,7 +176,15 @@ namespace DynamiBugPlannerBackend.Controllers
                 await _unitOfWork.Save();
                 var result = _mapper.Map<UserDTO>(user);
                 
-                return CreatedAtRoute("SignInUser", new { UserName = user.UserName, Password = user.Password }, result);
+                return CreatedAtRoute("SignInUser", 
+                    new { 
+                        UserName = user.UserName, 
+                        Password = user.Password 
+                    }, 
+                    new {
+                        token = CreateJwtToken(result), 
+                        expiration = DateTime.Now.AddMinutes(Convert.ToInt32(_config.GetValue<string>("JwtSettings:Expiration")))
+                    });
             }
             catch (Exception ex)
             {
@@ -177,8 +196,7 @@ namespace DynamiBugPlannerBackend.Controllers
         // POST: api/Users/Login
         [AllowAnonymous]
         [HttpPost("Login", Name = "SignInUser")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]            
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]  
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]     
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -195,17 +213,14 @@ namespace DynamiBugPlannerBackend.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(userDTO);
+                    return Unauthorized(userDTO);
                 }
 
                 if (ComparePasswordValue(userDTO.Password, user.Password))
                 {
-                    var result = _mapper.Map<UserDTO>(user);
                     return Accepted("Data", new {
-                        token = CreateJwtToken(result),
-                        username = user.UserName,
-                        role = user.Role,
-                        name = user.FirstName + " " + user.LastName
+                        token = CreateJwtToken(_mapper.Map<UserDTO>(user)),
+                        expiration = DateTime.Now.AddMinutes(Convert.ToInt32(_config.GetValue<string>("JwtSettings:Expiration")))
                     });
                 }
 
@@ -346,20 +361,23 @@ namespace DynamiBugPlannerBackend.Controllers
 
         private string CreateJwtToken(UserDTO userDTO)
         {
+            DateTime expiredDate = DateTime.Now.AddMinutes(Convert.ToInt32(_config.GetValue<string>("JwtSettings:Expiration")));
+
             List<Claim> claims = new List<Claim>
             {
+                new Claim(ClaimTypes.PrimarySid, userDTO.Id.ToString()),
                 new Claim(ClaimTypes.Name, userDTO.UserName),
                 new Claim(ClaimTypes.Role, userDTO.Role),
                 new Claim(ClaimTypes.Email, userDTO.Email!),
                 new Claim(ClaimTypes.GivenName, userDTO.FullName),
-                new Claim(ClaimTypes.PrimarySid, userDTO.Id.ToString())
+                new Claim(ClaimTypes.Expiration, expiredDate.ToString())
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetValue<string>("JwtSettings:Key")));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(Convert.ToInt32(_config.GetValue<string>("JwtSettings:Expiration"))),
+                expires: expiredDate,
                 signingCredentials: creds
             );
 
